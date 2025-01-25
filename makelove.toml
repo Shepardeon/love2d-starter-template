@@ -1,0 +1,8 @@
+name = "Love2D Starter Template"
+default_targets = ["win32", "win64", "appimage", "macos"]
+build_directory = "build"
+
+love_files = [
+    "::git-ls-tree::",
+    "-*/.*",
+]
