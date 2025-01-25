@@ -17,9 +17,6 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
     self.camera = camera.new(game.window.width, game.window.height, { center = true, maintainAspectRatio = true })
     self.world = bump.newWorld()
 
-    self.camera:addLayer('close', 1.5, { relativeScale = 0.5 })
-    self.camera:addLayer('far', 0.75)
-
     self.enable = enableFn or function()
         -- do nothing
     end
@@ -43,29 +40,12 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
         love.graphics.clear()
 
         self.camera:push()
-            self.camera:push('far')
 
+            -- Draw everything on the canvas from the camera's perspective
             for i = 1, #self.entities do
                 local entity = self.entities[i]
                 entity:draw()
             end
-
-            self.camera:pop('far')
-
-            -- Draw everything on the canvas
-            for i = 1, #self.entities do
-                local entity = self.entities[i]
-                entity:draw()
-            end
-
-            self.camera:push('close')
-
-            for i = 1, #self.entities do
-                local entity = self.entities[i]
-                entity:draw()
-            end
-
-            self.camera:pop('close')
 
         self.camera:pop()
 

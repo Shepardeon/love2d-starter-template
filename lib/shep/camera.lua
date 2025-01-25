@@ -85,7 +85,11 @@ function camera.new(width, height, flags)
     ---@param name string
     ---@return CameraLayer
     function self:getLayer(name)
-        return type(name) == "table" and name or self.layers[name]
+        if self.layers[name] == nil then
+            error("Layer not found with name " .. name, 2)
+        end
+
+        return self.layers[name]
     end
 
     ---@param layer string|nil
