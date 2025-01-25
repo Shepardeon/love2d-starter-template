@@ -1,8 +1,10 @@
-local lume = require('lib.lume')
 local shep = require('lib.shep')
 
+---@type Game
+local game
+
 function love.load()
-    local game = shep.game.new()
+    game = shep.game.new()
     local scene = shep.scene.new()
     local entity = shep.entity.new()
 
@@ -14,10 +16,14 @@ function love.load()
     local alive = entity:isAlive()
 
     shep.utils.printAll("The entity is alive ?", alive)
+
+    game.input:bind('space', 'jump')
 end
 
 function love.update(dt)
+    game:update(dt)
 end
 
 function love.draw()
+    game:draw()
 end

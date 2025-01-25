@@ -1,14 +1,22 @@
 local game = {}
-
-local format = string.format
+local eventManager = require("lib.shep.eventManager")
+local inputManager = require("lib.shep.inputManager")
 
 ---@return Game
 function game.new()
     ---@class Game
+    ---@field private scenes table<Scene>
+    ---@field private currentScene Scene
+    ---@field private timeScale number
+    ---@field events EventManager
+    ---@field input InputManager
     local self = {}
     self.scenes = {}
     self.currentScene = nil
     self.timeScale = 1
+
+    self.events = eventManager.new()
+    self.input = inputManager.new()
 
     ---@param scene Scene
     ---@return number # Scene index
@@ -21,7 +29,7 @@ function game.new()
     function self:switchScene(index)
         local scene = self.scenes[index]
         if scene == nil then
-            error(format("Scene not found with index %i", index), 2)
+            error("Scene not found with index " .. index, 2)
         end
 
         if self.currentScene then
@@ -39,6 +47,7 @@ function game.new()
 
     ---@param dt number
     function self:update(dt)
+        self.input:update()
         self.currentScene.update(dt * self.timeScale)
     end
 
