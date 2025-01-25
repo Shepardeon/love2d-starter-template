@@ -13,6 +13,8 @@ function eventManager.new()
         if (self.events[eventName] ~= nil) then
             error("Event already exists with name " .. eventName, 2)
         end
+
+        self.events[eventName] = {}
     end
 
     ---@param eventName string

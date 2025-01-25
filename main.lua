@@ -39,9 +39,17 @@ function love.load()
     shep.utils.printAll("The entity is alive ?", alive)
 
     game.input:bind('space', 'jump')
+    game.events:addEvent('onJump')
+    game.events:hook('onJump', function()
+        shep.utils.printText('Player jumped!', "I called that from an event!")
+    end)
 end
 
 function love.update(dt)
+    if (game.input:pressed('jump')) then
+        game.events:fire('onJump')
+    end
+
     game:update(dt)
 end
 
