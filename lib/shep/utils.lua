@@ -1,6 +1,8 @@
 local utils = {}
 
 local sqrt = math.sqrt
+local cos = math.cos
+local sin = math.sin
 
 ---@param x1 number
 ---@param y1 number
@@ -40,6 +42,18 @@ end
 function utils.normalize(x, y)
     local len = utils.length(x, y)
     return x / len, y / len
+end
+
+--- Rotate a point about another point by a given angle
+---@param px number
+---@param py number
+---@param ox number
+---@param oy number
+---@param angle number
+function utils.rotateAboutPoint(px, py, ox, oy, angle)
+    px, py = px - ox, py - oy
+    local c, s = cos(angle), sin(angle)
+    return px * c - py * s + ox, px * s + py * c + oy
 end
 
 function utils.printAll(...)

@@ -1,6 +1,7 @@
 local scene = {}
 local lume = require('lib.lume')
 local bump = require('lib.bump')
+local camera = require('lib.shep.camera')
 
 ---@param game Game
 ---@param updateFn fun(self: Scene, dt: number)|nil
@@ -13,7 +14,11 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
     local self = {}
     self.entities = {}
     self.canvas = love.graphics.newCanvas(game.window.width, game.window.height)
+    self.camera = camera.new(game.window.width, game.window.height, { center = true, maintainAspectRatio = true })
     self.world = bump.newWorld()
+
+    self.camera:addLayer('close', 1.5, { relativeScale = 0.5 })
+    self.camera:addLayer('far', 0.75)
 
     self.enable = enableFn or function()
         -- do nothing
@@ -29,17 +34,40 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
             local entity = self.entities[i]
             entity:update(dt)
         end
+
+        self.camera:update()
     end
 
     self.draw = drawFn or function()
         love.graphics.setCanvas(self.canvas)
         love.graphics.clear()
 
-        -- Draw everything on the canvas
-        for i = 1, #self.entities do
-            local entity = self.entities[i]
-            entity:draw()
-        end
+        self.camera:push()
+            self.camera:push('far')
+
+            for i = 1, #self.entities do
+                local entity = self.entities[i]
+                entity:draw()
+            end
+
+            self.camera:pop('far')
+
+            -- Draw everything on the canvas
+            for i = 1, #self.entities do
+                local entity = self.entities[i]
+                entity:draw()
+            end
+
+            self.camera:push('close')
+
+            for i = 1, #self.entities do
+                local entity = self.entities[i]
+                entity:draw()
+            end
+
+            self.camera:pop('close')
+
+        self.camera:pop()
 
         love.graphics.setCanvas()
 

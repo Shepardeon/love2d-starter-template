@@ -10,7 +10,7 @@ function player.new(scene)
     ---@param self Player
     ---@param dt number
     local update = function(self, dt)
-        self.x = self.x + 1
+        self.x = self.x + 100 * dt
         self.stateMachine:update(dt)
 
         if scene.game.input:pressed('jump') then
@@ -54,9 +54,11 @@ function player.new(scene)
 end
 
 function love.load()
+    love.graphics.setDefaultFilter('nearest', 'nearest')
+
     game = shep.game.new()
 
-    game:resizeGameWindow(1)
+    game:resizeGameWindow(2)
 
     local scene = shep.scene.new(game)
     local entity = player.new(scene)
