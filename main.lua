@@ -5,7 +5,8 @@ local game
 
 local player = {}
 
-function player.new()
+---@param scene Scene
+function player.new(scene)
     ---@param self Player
     ---@param dt number
     local update = function(self, dt)
@@ -18,7 +19,7 @@ function player.new()
     end
 
     ---@class Player: Entity
-    local self = shep.entity.new(update, draw)
+    local self = shep.entity.new(scene, update, draw)
     self.x = 0
     self.y = 0
 
@@ -27,12 +28,14 @@ end
 
 function love.load()
     game = shep.game.new()
-    local scene = shep.scene.new()
-    local entity = player.new()
 
-    local sceneIndex = game:addScene(scene)
-    game:switchScene(sceneIndex)
-    scene:addEntity(entity)
+    game:resizeGameWindow(2)
+
+    local scene = shep.scene.new(game)
+    local entity = player.new(scene)
+
+    game:addScene(scene)
+    game:switchScene(scene.sceneIndex)
     scene:findEntity(entity.uuid)
     local alive = entity:isAlive()
 
