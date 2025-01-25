@@ -157,6 +157,11 @@ function inputManager.new()
         return not (keyToButton[key] or gamepadToButton[key] or axisToButton[key])
     end
 
+    --- Returns true when action is being held down with optional interval and delay
+    ---@param action string
+    ---@param interval number
+    ---@param delay number
+    ---@return boolean
     function self:down(action, interval, delay)
         if action and interval and delay then
             for _, key in ipairs(self.binds[action]) do
@@ -192,8 +197,12 @@ function inputManager.new()
                 end
             end
         end
+
+        return false
     end
 
+    --- Unbinds a key from an action
+    ---@param key string
     function self:unbind(key)
         for action, keys in pairs(self.binds) do
             for i = #keys, 1, -1 do
@@ -208,9 +217,22 @@ function inputManager.new()
         end
     end
 
+    --- Unbinds all keys from all actions
     function self:unbindAll()
         self.binds = {}
         self.functions = {}
+    end
+
+    --- Returns the next input that was pressed
+    --- @return string|nil
+    function self:getNextInputPressed()
+        for _, key in ipairs(inputManager.all_keys) do
+            if self.state[key] and not self.prevState[key] then
+                return key
+            end
+        end
+
+        return nil
     end
 
     function self:update()
