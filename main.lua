@@ -11,6 +11,11 @@ function player.new(scene)
     ---@param dt number
     local update = function(self, dt)
         self.x = self.x + 1
+        self.stateMachine:update(dt)
+
+        if scene.game.input:pressed('jump') then
+            self.stateMachine:changeState(self.jumpState)
+        end
     end
 
     ---@param self Player
@@ -23,13 +28,35 @@ function player.new(scene)
     self.x = 0
     self.y = 0
 
+    self.stateMachine = shep.stateMachine.new()
+
+    function self:idleState()
+        print("I am in idle state")
+    end
+
+    function self:exitIdleState()
+        print("I am exiting idle state")
+    end
+
+    function self:jumpState()
+        print("I am in jump state")
+    end
+
+    function self:enterJumpState()
+        print("I am entering jump state")
+    end
+
+    self.stateMachine:addState(self.idleState, nil, self.exitIdleState)
+    self.stateMachine:addState(self.jumpState, self.enterJumpState)
+    self.stateMachine:changeState(self.idleState)
+
     return self
 end
 
 function love.load()
     game = shep.game.new()
 
-    game:resizeGameWindow(2)
+    game:resizeGameWindow(1)
 
     local scene = shep.scene.new(game)
     local entity = player.new(scene)

@@ -86,9 +86,9 @@ function game.new(windowOptions)
 
     ---@param dt number
     function self:update(dt)
+        self.currentScene.update(dt * self.timeScale)
         self.input:update()
         self.globalTimer:update(dt)
-        self.currentScene.update(dt * self.timeScale)
     end
 
     function self:draw()

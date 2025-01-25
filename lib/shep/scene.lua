@@ -1,5 +1,6 @@
 local scene = {}
 local lume = require('lib.lume')
+local bump = require('lib.bump')
 
 ---@param game Game
 ---@param updateFn fun(self: Scene, dt: number)|nil
@@ -12,6 +13,7 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
     local self = {}
     self.entities = {}
     self.canvas = love.graphics.newCanvas(game.window.width, game.window.height)
+    self.world = bump.newWorld()
 
     self.enable = enableFn or function()
         -- do nothing
