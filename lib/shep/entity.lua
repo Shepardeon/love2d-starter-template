@@ -2,7 +2,7 @@ local entity = {}
 local lume = require('lib.lume')
 
 ---@param updateFn fun(self: Entity, dt: number)|nil
----@param drawFn fun(self: Entity, dt: number)|nil
+---@param drawFn fun(self: Entity)|nil
 ---@return Entity
 function entity.new(updateFn, drawFn)
     --- @class Entity
