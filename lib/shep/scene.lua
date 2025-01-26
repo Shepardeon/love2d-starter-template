@@ -17,44 +17,44 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
     self.camera = camera.new(game.window.width, game.window.height, { center = true, maintainAspectRatio = true })
     self.world = bump.newWorld()
 
-    self.enable = enableFn or function()
+    self.enable = enableFn or function(this)
         -- do nothing
     end
 
-    self.disable = disableFn or function()
+    self.disable = disableFn or function(this)
         -- do nothing
     end
 
     --- @param dt number
-    self.update = updateFn or function(dt)
-        for i = #self.entities, 1, -1 do
-            local entity = self.entities[i]
+    self.update = updateFn or function(this, dt)
+        for i = #this.entities, 1, -1 do
+            local entity = this.entities[i]
             entity:update(dt)
         end
 
-        self.camera:update()
+        this.camera:update()
     end
 
-    self.draw = drawFn or function()
-        love.graphics.setCanvas(self.canvas)
+    self.draw = drawFn or function(this)
+        love.graphics.setCanvas(this.canvas)
         love.graphics.clear()
 
-        self.camera:push()
+        this.camera:push()
 
             -- Draw everything on the canvas from the camera's perspective
-            for i = 1, #self.entities do
-                local entity = self.entities[i]
+            for i = 1, #this.entities do
+                local entity = this.entities[i]
                 entity:draw()
             end
 
-        self.camera:pop()
+            this.camera:pop()
 
         love.graphics.setCanvas()
 
         -- Draw the canvas
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.setBlendMode('alpha', 'premultiplied')
-        love.graphics.draw(self.canvas, 0, 0, 0, game.window.scaleX, game.window.scaleY)
+        love.graphics.draw(this.canvas, 0, 0, 0, game.window.scaleX, game.window.scaleY)
         love.graphics.setBlendMode('alpha')
     end
 

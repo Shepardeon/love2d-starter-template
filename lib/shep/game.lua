@@ -52,11 +52,11 @@ function game.new(windowOptions)
         end
 
         if self.currentScene then
-            self.currentScene.disable()
+            self.currentScene:disable()
         end
 
         self.currentScene = scene
-        self.currentScene.enable()
+        self.currentScene:enable()
     end
 
     ---@param scale number
@@ -86,13 +86,13 @@ function game.new(windowOptions)
 
     ---@param dt number
     function self:update(dt)
-        self.currentScene.update(dt * self.timeScale)
+        self.currentScene:update(dt * self.timeScale)
         self.input:update()
         self.globalTimer:update(dt)
     end
 
     function self:draw()
-        self.currentScene.draw()
+        self.currentScene:draw()
     end
 
     return self
