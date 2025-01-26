@@ -12,21 +12,58 @@ function player.new(scene)
     local update = function(self, dt)
         self.x = self.x + 100 * dt
         self.stateMachine:update(dt)
+        self.animator:update(dt)
 
         if scene.game.input:pressed('jump') then
             self.stateMachine:changeState(self.jumpState)
+
+            if self.currentAnimation == 'walk_right' then
+                self.currentAnimation = 'walk_left'
+            else
+                self.currentAnimation = 'walk_right'
+            end
+
+            self.animator:setAnimation(self.currentAnimation)
         end
     end
 
     ---@param self Player
     local draw = function(self)
-        love.graphics.rectangle('fill', self.x, self.y, 10, 10)
+        self.spriteAtlas:drawQuad('walk_right1', -150, -150)
+        self.spriteAtlas:drawQuad('walk_right2', -150, -100)
+        self.spriteAtlas:drawQuad('walk_right3', -150, -50)
+        
+        self.animator:draw(self.x, self.y)
+        self.spriteAtlas:draw()
     end
 
     ---@class Player: Entity
     local self = shep.entity.new(scene, update, draw)
-    self.x = 0
+    self.x = -450
     self.y = 0
+
+    --- Test atlas
+    self.spriteAtlas = shep.atlas.new('assets/ranger_f.png', {
+        tileWidth = 15*2,
+        tileHeight = 18*2,
+        spacingX = 1,
+    })
+
+    --- Animator with shared atlas => will use sprite batching
+    self.animator = shep.animator.new(self.spriteAtlas)
+
+    self.spriteAtlas:addQuad('walk_right1', 0, 1)
+    self.spriteAtlas:addQuad('walk_right2', 1, 1)
+    self.spriteAtlas:addQuad('walk_right3', 2, 1)
+
+    local walkRightFrames = {'walk_right1', 'walk_right2', 'walk_right3', 'walk_right2'}
+    self.animator:addAnimation('walk_right', walkRightFrames, {0.1, 0.1, 0.1, 0.1})
+    self.animator:setAnimation('walk_right')
+
+    local walkLeftFrames = self.animator:getFrames('walk_left', 0,3, 1,3, 2,3, 1,3)
+    self.animator:addAnimation('walk_left', walkLeftFrames, {0.1, 0.1, 0.1, 0.1})
+
+    self.currentAnimation = 'walk_right'
 
     self.stateMachine = shep.stateMachine.new()
 
@@ -58,7 +95,7 @@ function love.load()
 
     game = shep.game.new()
 
-    game:resizeGameWindow(2)
+    game:resizeGameWindow(1)
 
     local scene = shep.scene.new(game)
     local entity = player.new(scene)

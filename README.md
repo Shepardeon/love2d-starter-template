@@ -11,3 +11,5 @@
 ## License
 
 All included libraries in `lib/` remain under their original license. Except for Shep and all original code which is distributed under the MIT License (see [LICENSE](https://github.com/Shepardeon/love2d-starter-template/blob/main/LICENSE))
+
+Included asset (ranger_f.png) is shared under CC BY 3.0, original author is [Antifarea](https://opengameart.org/content/antifareas-rpg-sprite-set-1-enlarged-w-transparent-background-fixed)

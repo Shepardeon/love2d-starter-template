@@ -56,6 +56,26 @@ function utils.rotateAboutPoint(px, py, ox, oy, angle)
     return px * c - py * s + ox, px * s + py * c + oy
 end
 
+--- Repeats a value n times in a table
+---@param val any
+---@param n number
+---@return table
+function utils.repeatTable(val, n)
+    local t = {}
+    for i = 1, n do
+        t[i] = val
+    end
+    return t
+end
+
+-- function utils.repeat(val, n)
+--     local t = {}
+--     for i = 1, n do
+--         t[i] = val
+--     end
+--     return t
+-- end
+
 function utils.printAll(...)
     local args = {...}
     for _, v in ipairs(args) do
