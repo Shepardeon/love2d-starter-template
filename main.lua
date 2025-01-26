@@ -56,10 +56,12 @@ function player.new(scene)
     self.spriteAtlas:addQuad('walk_right2', 1, 1)
     self.spriteAtlas:addQuad('walk_right3', 2, 1)
 
+    --- Animations can be built directly from the atlas
     local walkRightFrames = {'walk_right1', 'walk_right2', 'walk_right3', 'walk_right2'}
     self.animator:addAnimation('walk_right', walkRightFrames, {0.1, 0.1, 0.1, 0.1})
     self.animator:setAnimation('walk_right')
 
+    --- Or they can be created directly from the animator
     local walkLeftFrames = self.animator:getFrames('walk_left', 0,3, 1,3, 2,3, 1,3)
     self.animator:addAnimation('walk_left', walkLeftFrames, {0.1, 0.1, 0.1, 0.1})
 
