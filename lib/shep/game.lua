@@ -3,12 +3,12 @@ local eventManager = require("lib.shep.eventManager")
 local inputManager = require("lib.shep.inputManager")
 local timer = require("lib.hump.timer")
 
----@param windowOptions GameWindow|nil
----@return Game
+---@param windowOptions shep.GameWindow|nil
+---@return shep.Game
 function game.new(windowOptions)
-    ---@class Game
-    ---@field private scenes table<Scene>
-    ---@field private currentScene Scene
+    ---@class shep.Game
+    ---@field private scenes table<shep.Scene>
+    ---@field private currentScene shep.Scene
     ---@field private timeScale number
     ---@field window table<string, number>
     ---@field events EventManager
@@ -18,7 +18,7 @@ function game.new(windowOptions)
     self.currentScene = nil
     self.timeScale = 1
 
-    ---@class GameWindow
+    ---@class shep.GameWindow
     ---@field width number
     ---@field height number
     ---@field scaleX number
@@ -31,13 +31,13 @@ function game.new(windowOptions)
         scaleY = 1,
     }
 
-    ---@type HumpTimer
+    ---@type hump.Timer
     self.globalTimer = timer.new()
 
     self.events = eventManager.new()
     self.input = inputManager.new()
 
-    ---@param scene Scene
+    ---@param scene shep.Scene
     ---@return number # Scene index
     function self:addScene(scene)
         table.insert(self.scenes, scene)

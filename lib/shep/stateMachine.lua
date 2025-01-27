@@ -7,7 +7,7 @@ function stateMachine.new()
     ---@param enterState function|nil
     ---@param exitState function|nil
     function stateFlow.new(normalState, enterState, exitState)
-        --- @class StateFlow
+        --- @class shep.StateFlow
         local self = {}
         self.normalState = normalState
         self.enterState = enterState
@@ -15,8 +15,8 @@ function stateMachine.new()
         return self
     end
 
-    --- @class StateMachine
-    --- @field states table<function, StateFlow>
+    --- @class shep.StateMachine
+    --- @field states table<function, shep.StateFlow>
     --- @field currentState function|nil
     local self = {}
     self.states = {}
@@ -54,7 +54,7 @@ function stateMachine.new()
     end
 
     ---@private
-    ---@param stateFlows StateFlow
+    ---@param stateFlows shep.StateFlow
     function self:setState(stateFlows)
         if self.currentState and self.states[self.currentState].exitState then
             self.states[self.currentState].exitState()

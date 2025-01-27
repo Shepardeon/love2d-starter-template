@@ -3,14 +3,14 @@ local lume = require('lib.lume')
 local bump = require('lib.bump')
 local camera = require('lib.shep.camera')
 
----@param game Game
----@param updateFn fun(self: Scene, dt: number)|nil
----@param drawFn fun(self: Scene)|nil
----@param enableFn fun(self: Scene)|nil
----@param disableFn fun(self: Scene)|nil
----@return Scene
+---@param game shep.Game
+---@param updateFn fun(self: shep.Scene, dt: number)|nil
+---@param drawFn fun(self: shep.Scene)|nil
+---@param enableFn fun(self: shep.Scene)|nil
+---@param disableFn fun(self: shep.Scene)|nil
+---@return shep.Scene
 function scene.new(game, updateFn, drawFn, enableFn, disableFn)
-    --- @class Scene
+    --- @class shep.Scene
     local self = {}
     self.entities = {}
     self.canvas = love.graphics.newCanvas(game.window.width, game.window.height)
@@ -58,18 +58,18 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
         love.graphics.setBlendMode('alpha')
     end
 
-    --- @param entity Entity
+    --- @param entity shep.Entity
     function self:addEntity(entity)
         table.insert(self.entities, entity)
     end
 
-    --- @param entity Entity
+    --- @param entity shep.Entity
     function self:removeEntity(entity)
         lume.remove(self.entities, entity)
     end
 
     --- @param uuid string
-    --- @return Entity|nil
+    --- @return shep.Entity|nil
     function self:findEntity(uuid)
         return lume.match(self.entities, function(e)
             return e.uuid == uuid

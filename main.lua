@@ -1,11 +1,11 @@
 local shep = require('lib.shep')
 
----@type Game
+---@type shep.Game
 local game
 
 local player = {}
 
----@param scene Scene
+---@param scene shep.Scene
 function player.new(scene)
     ---@param self Player
     ---@param dt number
@@ -37,7 +37,7 @@ function player.new(scene)
         self.spriteAtlas:draw()
     end
 
-    ---@class Player: Entity
+    ---@class Player: shep.Entity
     local self = shep.entity.new(scene, update, draw)
     self.x = -450
     self.y = 0

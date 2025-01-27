@@ -1,7 +1,7 @@
 local atlas = {}
 local lume = require('lib.lume')
 
----@class AtlasOptions
+---@class shep.AtlasOptions
 local defaultOptions = {
     ---@type number|nil
     tileWidth = 32,
@@ -20,13 +20,13 @@ local defaultOptions = {
 }
 
 ---@param image string|love.Image
----@param options AtlasOptions|nil
+---@param options shep.AtlasOptions|nil
 function atlas.new(image, options)
-    ---@class Atlas
+    ---@class shep.Atlas
     ---@field private image love.Image
     ---@field private sourceImage table
     ---@field private quads table<string, love.Quad>
-    ---@field private options AtlasOptions
+    ---@field private options shep.AtlasOptions
     ---@field private quadsInBatch table<number, string>
     local self = {}
     self.quads = {}

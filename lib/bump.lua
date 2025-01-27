@@ -322,7 +322,7 @@ local bump = {
   -- World
   ------------------------------------------
   
-  ---@class BumpWorld
+  ---@class bump.World
   local World = {}
   local World_mt = {__index = World}
   
@@ -735,11 +735,11 @@ local bump = {
   
   -- Public library functions
   ---@param cellSize number|nil
-  ---@return BumpWorld
+  ---@return bump.World
   bump.newWorld = function(cellSize)
     cellSize = cellSize or 64
     assertIsPositiveNumber(cellSize, 'cellSize')
-    ---@class BumpWorld
+    ---@class bump.World
     local world = setmetatable({
       cellSize       = cellSize,
       rects          = {},

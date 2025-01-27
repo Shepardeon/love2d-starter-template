@@ -1,12 +1,12 @@
 local entity = {}
 local lume = require('lib.lume')
 
----@param scene Scene
----@param updateFn fun(self: Entity, dt: number)|nil
----@param drawFn fun(self: Entity)|nil
----@return Entity
+---@param scene shep.Scene
+---@param updateFn fun(self: shep.Entity, dt: number)|nil
+---@param drawFn fun(self: shep.Entity)|nil
+---@return shep.Entity
 function entity.new(scene, updateFn, drawFn)
-    --- @class Entity
+    --- @class shep.Entity
     local self = {}
     self.uuid = lume.uuid()
     self.alive = true

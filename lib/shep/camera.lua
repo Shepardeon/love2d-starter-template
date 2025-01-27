@@ -7,9 +7,9 @@ local min = math.min
 ---@param width number
 ---@param height number
 ---@param flags table|nil
----@return Camera
+---@return shep.Camera
 function camera.new(width, height, flags)
-    --- @class Camera
+    --- @class shep.Camera
     local self = {
         x = 0, y = 0,
         width = width, height = height,

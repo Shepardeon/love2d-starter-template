@@ -2,15 +2,15 @@ local animator = {}
 local atlas = require("lib.shep.atlas")
 local utils = require("lib.shep.utils")
 
----@param atlasOptions AtlasOptions|nil
+---@param atlasOptions shep.AtlasOptions|nil
 ---@param image string|love.Image|nil
----@param sharedAtlas Atlas|nil
----@return Animator
+---@param sharedAtlas shep.Atlas|nil
+---@return shep.Animator
 function animator.new(sharedAtlas, image, atlasOptions)
-    ---@class Animator
-    ---@field private atlas Atlas
-    ---@field private animations table<string, Animation>
-    ---@field private currentAnimation Animation|nil
+    ---@class shep.Animator
+    ---@field private atlas shep.Atlas
+    ---@field private animations table<string, shep.Animation>
+    ---@field private currentAnimation shep.Animation|nil
     ---@field private useSpriteBatch boolean
     ---@field private batchIndex number|nil
     local self = {}
@@ -63,7 +63,7 @@ function animator.new(sharedAtlas, image, atlasOptions)
     ---@param name string
     ---@param frames string[]
     ---@param durations number|number[]
-    ---@param onLoop fun(anim: Animation, loops: number)|string|nil -- If passed 'pauseOnLoop', the animation will pause on loop
+    ---@param onLoop fun(anim: shep.Animation, loops: number)|string|nil -- If passed 'pauseOnLoop', the animation will pause on loop
     function self:addAnimation(name, frames, durations, onLoop)
         if self.animations[name] then
             error("Animation with name '" .. name .. "' already exists", 2)
@@ -77,7 +77,7 @@ function animator.new(sharedAtlas, image, atlasOptions)
             end
         end
 
-        ---@param anim Animation
+        ---@param anim shep.Animation
         ---@param loops number
         local function onLoopPause(anim, loops)
             anim.paused = true
@@ -87,10 +87,10 @@ function animator.new(sharedAtlas, image, atlasOptions)
             onLoop = onLoopPause
         end
 
-        ---@class Animation
+        ---@class shep.Animation
         ---@field frames string[]
         ---@field durations number[]
-        ---@field onLoop fun(anim: Animation, loops: number)|nil
+        ---@field onLoop fun(anim: shep.Animation, loops: number)|nil
         ---@field currentFrame string
         ---@field currentTime number
         ---@field paused boolean
@@ -106,6 +106,7 @@ function animator.new(sharedAtlas, image, atlasOptions)
         }
     end
 
+    ---@param name string
     function self:setAnimation(name)
         if not self.animations[name] then
             error("Animation with name '" .. name .. "' does not exist", 2)
