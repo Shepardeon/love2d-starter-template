@@ -2,6 +2,7 @@ local camera = {}
 local lume = require('lib.lume')
 local utils = require('lib.shep.utils')
 
+local sqrt = math.sqrt
 local min = math.min
 
 ---@class shep.CameraOptions
@@ -15,7 +16,9 @@ local defaultCamOptions = {
     ---@type number
     aspectRatioScale = 1,
     ---@type love.StackType
-    mode = 'transform'
+    mode = 'transform',
+    ---@type function
+    smoothingFunction = camera.smoothingFunctions.none
 }
 
 ---@class shep.CameraLayerOptions
@@ -24,6 +27,31 @@ local defaultLayerOptions = {
     speedToScaleRatio = 1,
     ---@type love.StackType
     mode = 'transform'
+}
+
+camera.smoothingFunctions = {
+    none = function()
+        return function(dx, dy) return dx, dy end
+    end,
+
+    linear = function(speed)
+        return function(dx, dy, s)
+            local d = sqrt(dx * dx + dy * dy)
+            local dts = min((s or speed) * love.timer.getDelta(), d)
+            if d > 0 then
+                dx, dy = dx / d, dy / d
+            end
+
+            return dx * dts, dy * dts
+        end
+    end,
+
+    damped = function(stiffness)
+        return function(dx, dy, s)
+            local dts = love.timer.getDelta() * (s or stiffness)
+            return dx * dts, dy * dts
+        end
+    end
 }
 
 ---@param width number
@@ -38,13 +66,15 @@ function camera.new(width, height, options)
     --- @field private aspectRatioScale number
     --- @field private mode love.StackType
     --- @field private layers table<string, shep.CameraLayer>
+    --- @field private smoothingFunction function
     local self = {
         resizable = false,
         maintainAspectRatio = false,
         center = false,
         aspectRatioScale = 1,
         mode = 'transform',
-        layers = {}
+        layers = {},
+        smoothingFunction = camera.smoothingFunctions.none
     }
     self.x = 0
     self.y = 0
@@ -163,6 +193,67 @@ function camera.new(width, height, options)
     function self:getMouseWorldCoordinates(layer)
         local x, y = love.mouse.getPosition()
         return self:getWorldCoordinates(x, y, layer)
+    end
+
+    ---@param dx number
+    ---@param dy number
+    function self:move(dx, dy)
+        self.x, self.y = self.x + dx, self.y + dy
+    end
+
+    ---@param x number
+    ---@param smoothingFunction function|nil -- Defaults to none
+    ---@param ... any -- Additional arguments for the smoothing function
+    function self:followX(x, smoothingFunction, ...)
+        local dx, dy = (smoothingFunction or self.smoothingFunction)(x - self.x, self.y, ...)
+        self.x = self.x + dx
+    end
+
+    ---@param y number
+    ---@param smoothingFunction function|nil -- Defaults to none
+    ---@param ... any -- Additional arguments for the smoothing function
+    function self:followY(y, smoothingFunction, ...)
+        local dx, dy = (smoothingFunction or self.smoothingFunction)(self.x, y - self.y, ...)
+        self.y = self.y + dy
+    end
+
+    ---@param x number
+    ---@param y number
+    ---@param smoothingFunction function|nil -- Defaults to none
+    ---@param ... any -- Additional arguments for the smoothing function
+    function self:follow(x, y, smoothingFunction, ...)
+        self:move((smoothingFunction or self.smoothingFunction)(x - self.x, y -self.y, ...))
+    end
+
+    --- Locks the camera to a certain point on the screen in world coordinates
+    ---@param x number
+    ---@param y number
+    ---@param minX number -- The minimum x value the camera can move to
+    ---@param minY number -- The minimum y value the camera can move to
+    ---@param maxX number -- The maximum x value the camera can move to
+    ---@param maxY number -- The maximum y value the camera can move to
+    ---@param smoothingFunction function|nil -- Defaults to none
+    ---@param ... any -- Additional arguments for the smoothing function
+    function self:followLockScreen(x, y, minX, minY, maxX, maxY, smoothingFunction, ...)
+        x, y = self:getWorldCoordinates(x, y)
+        local dx, dy = 0, 0
+
+        if x < minX then
+            dx = x - minX
+        elseif x > maxX then
+            dx = x - maxX
+        end
+
+        if y < minY then
+            dy = y - minY
+        elseif y > maxY then
+            dy = y - maxY
+        end
+
+        dx, dy = utils.rotateAboutPoint(dx, dy, 0, 0, -self.rotation)
+        dx, dy = dx / self.scale, dy / self.scale
+
+        self:move((smoothingFunction or self.smoothingFunction)(dx,dy,...))
     end
 
     ---@param ds number
