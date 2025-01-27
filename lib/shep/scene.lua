@@ -14,7 +14,14 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
     local self = {}
     self.entities = {}
     self.canvas = love.graphics.newCanvas(game.window.width, game.window.height)
-    self.camera = camera.new(game.window.width, game.window.height, { center = true, maintainAspectRatio = true })
+    --- @type shep.Camera
+    self.camera = camera.new(game.window.width, game.window.height, { 
+        center = true,
+        maintainAspectRatio = true,
+        smoothingFunction = camera.smoothingFunctions.linear(75)
+    })
+    self.camera:addLayer('far', 0.5)
+    self.camera:addLayer('near', 2)
     self.world = bump.newWorld()
 
     self.enable = enableFn or function(this)
@@ -25,6 +32,7 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
         -- do nothing
     end
 
+    --- @param this shep.Scene
     --- @param dt number
     self.update = updateFn or function(this, dt)
         for i = #this.entities, 1, -1 do
@@ -33,13 +41,24 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
         end
 
         this.camera:update()
+        -- Test: follow the first entity
+        if #this.entities > 0 then
+            this.camera:followLockScreenOutside(dt, this.entities[1].x, this.entities[1].y, -150, -150, 150, 150)
+        end
     end
 
+    --- @param this shep.Scene
     self.draw = drawFn or function(this)
         love.graphics.setCanvas(this.canvas)
         love.graphics.clear()
 
         this.camera:push()
+            this.camera:push('far')
+                for i = 1, #this.entities do
+                    local entity = this.entities[i]
+                    entity:draw()
+                end
+            this.camera:pop('far')
 
             -- Draw everything on the canvas from the camera's perspective
             for i = 1, #this.entities do
@@ -47,7 +66,14 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
                 entity:draw()
             end
 
-            this.camera:pop()
+            this.camera:push('near')
+                for i = 1, #this.entities do
+                    local entity = this.entities[i]
+                    entity:draw()
+                end
+            this.camera:pop('near')
+
+        this.camera:pop()
 
         love.graphics.setCanvas()
 

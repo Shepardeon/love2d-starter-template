@@ -2,42 +2,17 @@ local camera = {}
 local lume = require('lib.lume')
 local utils = require('lib.shep.utils')
 
-local sqrt = math.sqrt
 local min = math.min
-
----@class shep.CameraOptions
-local defaultCamOptions = {
-    ---@type boolean
-    resizable = false,
-    ---@type boolean
-    maintainAspectRatio = false,
-    ---@type boolean
-    center = false,
-    ---@type number
-    aspectRatioScale = 1,
-    ---@type love.StackType
-    mode = 'transform',
-    ---@type function
-    smoothingFunction = camera.smoothingFunctions.none
-}
-
----@class shep.CameraLayerOptions
-local defaultLayerOptions = {
-    ---@type number -- Controls how much the layer is translated based on the layer's scale
-    speedToScaleRatio = 1,
-    ---@type love.StackType
-    mode = 'transform'
-}
 
 camera.smoothingFunctions = {
     none = function()
-        return function(dx, dy) return dx, dy end
+        return function(dt, dx, dy) return dx,dy end
     end,
 
     linear = function(speed)
-        return function(dx, dy, s)
-            local d = sqrt(dx * dx + dy * dy)
-            local dts = min((s or speed) * love.timer.getDelta(), d)
+        return function(dt, dx, dy, s)
+            local d = utils.length(dx, dy)
+            local dts = min((s or speed) * dt, d)
             if d > 0 then
                 dx, dy = dx / d, dy / d
             end
@@ -47,11 +22,35 @@ camera.smoothingFunctions = {
     end,
 
     damped = function(stiffness)
-        return function(dx, dy, s)
-            local dts = love.timer.getDelta() * (s or stiffness)
+        return function(dt, dx, dy, s)
+            local dts = dt * (s or stiffness)
             return dx * dts, dy * dts
         end
     end
+}
+
+---@class shep.CameraOptions
+local defaultCamOptions = {
+    ---@type boolean|nil
+    resizable = false,
+    ---@type boolean|nil
+    maintainAspectRatio = false,
+    ---@type boolean|nil
+    center = false,
+    ---@type number|nil
+    aspectRatioScale = 1,
+    ---@type love.StackType|nil
+    mode = 'transform',
+    ---@type function|nil
+    smoothingFunction = camera.smoothingFunctions.none()
+}
+
+---@class shep.CameraLayerOptions
+local defaultLayerOptions = {
+    ---@type number|nil -- Controls how much the layer is translated based on the layer's scale
+    speedToScaleRatio = 1,
+    ---@type love.StackType|nil
+    mode = 'transform'
 }
 
 ---@param width number
@@ -67,15 +66,9 @@ function camera.new(width, height, options)
     --- @field private mode love.StackType
     --- @field private layers table<string, shep.CameraLayer>
     --- @field private smoothingFunction function
-    local self = {
-        resizable = false,
-        maintainAspectRatio = false,
-        center = false,
-        aspectRatioScale = 1,
-        mode = 'transform',
-        layers = {},
-        smoothingFunction = camera.smoothingFunctions.none
-    }
+    local self = {}
+
+    self.layers = {}
     self.x = 0
     self.y = 0
     self.width = width
@@ -87,7 +80,8 @@ function camera.new(width, height, options)
     self.scale = 1
     self.rotation = 0
 
-    lume.merge(self, options or defaultCamOptions)
+    options = lume.merge(defaultCamOptions, options or {})
+    self = lume.merge(options, self)
 
     function self:update()
         if self.resizable then self:resizingFunction(self:getContainerDimensions()) end
@@ -132,14 +126,15 @@ function camera.new(width, height, options)
         layer.push = function()
             love.graphics.push(layer.mode)
             love.graphics.origin()
-            love.graphics.translate(self.x + self.offsetX, self.y + self.offsetY)
+            love.graphics.translate(-self.x + self.offsetX, -self.y + self.offsetY)
             love.graphics.rotate(self.rotation)
             love.graphics.scale(self.scale * self.aspectRatioScale * layer.scale)
             love.graphics.translate(-self.translationX * layer.speedToScaleRatio, -self.translationY * layer.speedToScaleRatio)
         end
         layer.pop = love.graphics.pop
 
-        lume.merge(layer, layerOptions or defaultLayerOptions)
+        layerOptions = lume.merge(defaultLayerOptions, layerOptions or {})
+        layer = lume.merge(layerOptions, layer)
 
         self.layers[name] = layer
         return layer
@@ -198,34 +193,39 @@ function camera.new(width, height, options)
     ---@param dx number
     ---@param dy number
     function self:move(dx, dy)
-        self.x, self.y = self.x + dx, self.y + dy
+        --self.x, self.y = self.x + dx, self.y + dy
+        self.translationX, self.translationY = self.translationX + dx, self.translationY + dy
     end
 
+    ---@param dt number
     ---@param x number
     ---@param smoothingFunction function|nil -- Defaults to none
     ---@param ... any -- Additional arguments for the smoothing function
-    function self:followX(x, smoothingFunction, ...)
-        local dx, dy = (smoothingFunction or self.smoothingFunction)(x - self.x, self.y, ...)
-        self.x = self.x + dx
+    function self:followX(dt, x, smoothingFunction, ...)
+        local dx, dy = (smoothingFunction or self.smoothingFunction)(dt, x - self.translationX, self.translationY, ...)
+        self.translationX = self.translationX + dx
     end
 
+    ---@param dt number
     ---@param y number
     ---@param smoothingFunction function|nil -- Defaults to none
     ---@param ... any -- Additional arguments for the smoothing function
-    function self:followY(y, smoothingFunction, ...)
-        local dx, dy = (smoothingFunction or self.smoothingFunction)(self.x, y - self.y, ...)
-        self.y = self.y + dy
+    function self:followY(dt, y, smoothingFunction, ...)
+        local dx, dy = (smoothingFunction or self.smoothingFunction)(dt, self.translationX, y - self.translationY, ...)
+        self.translationY = self.translationY + dy
     end
 
+    ---@param dt number
     ---@param x number
     ---@param y number
     ---@param smoothingFunction function|nil -- Defaults to none
     ---@param ... any -- Additional arguments for the smoothing function
-    function self:follow(x, y, smoothingFunction, ...)
-        self:move((smoothingFunction or self.smoothingFunction)(x - self.x, y -self.y, ...))
+    function self:follow(dt, x, y, smoothingFunction, ...)
+        self:move((smoothingFunction or self.smoothingFunction)(dt, x - self.translationX, y - self.translationY, ...))
     end
 
-    --- Locks the camera to a certain point on the screen in world coordinates
+    --- Locks the camera as long as the x and y values are within the min and max values
+    ---@param dt number
     ---@param x number
     ---@param y number
     ---@param minX number -- The minimum x value the camera can move to
@@ -234,26 +234,42 @@ function camera.new(width, height, options)
     ---@param maxY number -- The maximum y value the camera can move to
     ---@param smoothingFunction function|nil -- Defaults to none
     ---@param ... any -- Additional arguments for the smoothing function
-    function self:followLockScreen(x, y, minX, minY, maxX, maxY, smoothingFunction, ...)
-        x, y = self:getWorldCoordinates(x, y)
+    function self:followLockScreenInside(dt, x, y, minX, minY, maxX, maxY, smoothingFunction, ...)
         local dx, dy = 0, 0
 
-        if x < minX then
-            dx = x - minX
-        elseif x > maxX then
-            dx = x - maxX
+        if x < minX or x > maxX then
+            dx = x - (x < minX and minX or maxX) - self.translationX
         end
 
-        if y < minY then
-            dy = y - minY
-        elseif y > maxY then
-            dy = y - maxY
+        if y < minY or y > maxY then
+            dy = y - (y < minY and minY or maxY) - self.translationY
         end
 
-        dx, dy = utils.rotateAboutPoint(dx, dy, 0, 0, -self.rotation)
-        dx, dy = dx / self.scale, dy / self.scale
+        self:move((smoothingFunction or self.smoothingFunction)(dt, dx, dy, ...))
+    end
 
-        self:move((smoothingFunction or self.smoothingFunction)(dx,dy,...))
+    --- Locks the camera when the x and y values are outside the min and max values
+    ---@param dt number
+    ---@param x number
+    ---@param y number
+    ---@param minX number -- The minimum x value the camera can move to
+    ---@param minY number -- The minimum y value the camera can move to
+    ---@param maxX number -- The maximum x value the camera can move to
+    ---@param maxY number -- The maximum y value the camera can move to
+    ---@param smoothingFunction function|nil -- Defaults to none
+    ---@param ... any -- Additional arguments for the smoothing function
+    function self:followLockScreenOutside(dt, x, y, minX, minY, maxX, maxY, smoothingFunction, ...)
+        local dx, dy = 0, 0
+
+        if x >= minX and x <= maxX then
+            dx = x - self.translationX
+        end
+
+        if y >= minY and y <= maxY then
+            dy = y - self.translationY
+        end
+
+        self:move((smoothingFunction or self.smoothingFunction)(dt, dx, dy, ...))
     end
 
     ---@param ds number
