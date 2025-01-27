@@ -3,6 +3,18 @@ local eventManager = require("lib.shep.eventManager")
 local inputManager = require("lib.shep.inputManager")
 local timer = require("lib.hump.timer")
 
+---@class shep.GameWindow
+---@field width number
+---@field height number
+---@field scaleX number
+---@field scaleY number
+local defaultWindowOptions = {
+    width = 960,
+    height = 540,
+    scaleX = 1,
+    scaleY = 1
+}
+
 ---@param windowOptions shep.GameWindow|nil
 ---@return shep.Game
 function game.new(windowOptions)
@@ -18,18 +30,7 @@ function game.new(windowOptions)
     self.currentScene = nil
     self.timeScale = 1
 
-    ---@class shep.GameWindow
-    ---@field width number
-    ---@field height number
-    ---@field scaleX number
-    ---@field scaleY number
-    self.window =  windowOptions or {
-        width = 960, -- Base width
-        height = 540, -- Base height
-        -- Scale factors
-        scaleX = 1,
-        scaleY = 1,
-    }
+    self.window =  windowOptions or defaultWindowOptions
 
     ---@type hump.Timer
     self.globalTimer = timer.new()
