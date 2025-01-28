@@ -29,6 +29,72 @@ camera.smoothingFunctions = {
     end
 }
 
+camera.shake = {}
+
+---@param amplitude number
+---@param frequency number
+---@param duration number
+function camera.shake.new(amplitude, frequency, duration)
+    --- @class shep.Shake
+    --- @field private amplitude number
+    --- @field private frequency number
+    --- @field private duration number
+    --- @field private samples table<number>
+    --- @field private startTime number
+    --- @field private t number
+    --- @field private shaking boolean
+    local self = {}
+    self.amplitude = amplitude
+    self.frequency = frequency
+    self.duration = duration * 1000
+
+    local sampleCount = (self.duration / 1000) * frequency
+    self.samples = {}
+    for i = 1 , sampleCount do
+        self.samples[i] = lume.random(-1, 1)
+    end
+
+    self.startTime = love.timer.getTime()*1000
+    self.t = 0
+    self.shaking = true
+
+    function self:update()
+        self.t = love.timer.getTime()*1000 - self.startTime
+        if self.t > self.duration then
+            self.shaking = false
+        end
+    end
+
+    ---@param t number|nil
+    function self:getAmplitude(t)
+        if not t then
+            if not self.shaking then return 0 end
+            t = self.t
+        end
+
+        local rawSamples = (t / 1000) * self.frequency
+        local sample0 = math.floor(rawSamples)
+        local sample1 = sample0 + 1
+        local decay = self:decay(t)
+
+        return self.amplitude * (self:noise(sample0) + (rawSamples - sample0) * (self:noise(sample1) - self:noise(sample0))) * decay
+    end
+
+    ---@private
+    ---@param sample number
+    function self:noise(sample)
+        return sample < #self.samples and self.samples[sample] or 0
+    end
+
+    ---@private
+    ---@param t number
+    function self:decay(t)
+        return t <= self.duration and (self.duration - t) / self.duration or 0
+    end
+
+    return self
+end
+
 ---@class shep.CameraOptions
 local defaultCamOptions = {
     ---@type boolean|nil
@@ -66,6 +132,18 @@ function camera.new(width, height, options)
     --- @field private mode love.StackType
     --- @field private layers table<string, shep.CameraLayer>
     --- @field private smoothingFunction function
+    --- @field private x number
+    --- @field private y number
+    --- @field private width number
+    --- @field private height number
+    --- @field private translationX number
+    --- @field private translationY number
+    --- @field private offsetX number
+    --- @field private offsetY number
+    --- @field private scale number
+    --- @field private rotation number
+    --- @field private shakes { x: table<shep.Shake>, y: table<shep.Shake> }
+    --- @field private viewportShakes { x: table<shep.Shake>, y: table<shep.Shake> }
     local self = {}
 
     self.layers = {}
@@ -80,11 +158,82 @@ function camera.new(width, height, options)
     self.scale = 1
     self.rotation = 0
 
+    self.shakes = { x = {}, y = {} }
+    self.viewportShakes = { x = {}, y = {} }
+
     options = lume.merge(defaultCamOptions, options or {})
     self = lume.merge(options, self)
 
+    ---@private
+    ---@param shakes table<shep.Shake>
+    ---@return number
+    function self:sumShakes(shakes)
+        local shakeAmount = 0
+
+        for i = #shakes, 1, -1 do
+            shakes[i]:update()
+            shakeAmount = shakeAmount + shakes[i]:getAmplitude()
+
+            if not shakes[i].shaking then
+                table.remove(shakes, i)
+            end
+        end
+
+        return shakeAmount
+    end
+
     function self:update()
         if self.resizable then self:resizingFunction(self:getContainerDimensions()) end
+
+        local xShakeAmount, yShakeAmount = self:sumShakes(self.shakes.x), self:sumShakes(self.shakes.y)
+        local xViewportShakeAmount, yViewportShakeAmount = self:sumShakes(self.viewportShakes.x), self:sumShakes(self.viewportShakes.y)
+
+        self:move(xShakeAmount, yShakeAmount)
+        self:moveViewport(xViewportShakeAmount, yViewportShakeAmount)
+    end
+
+    ---@param amplitude number
+    ---@param frequency number
+    ---@param duration number
+    function self:shake(amplitude, frequency, duration)
+        self:shakeX(amplitude, frequency, duration)
+        self:shakeY(amplitude, frequency, duration)
+    end
+
+    ---@param amplitude number
+    ---@param frequency number
+    ---@param duration number
+    function self:shakeX(amplitude, frequency, duration)
+        table.insert(self.shakes.x, camera.shake.new(amplitude, frequency, duration))
+    end
+
+    ---@param amplitude number
+    ---@param frequency number
+    ---@param duration number
+    function self:shakeY(amplitude, frequency, duration)
+        table.insert(self.shakes.y, camera.shake.new(amplitude, frequency, duration))
+    end
+
+    ---@param amplitude number
+    ---@param frequency number
+    ---@param duration number
+    function self:shakeViewport(amplitude, frequency, duration)
+        self:shakeViewportX(amplitude, frequency, duration)
+        self:shakeViewportY(amplitude, frequency, duration)
+    end
+
+    ---@param amplitude number
+    ---@param frequency number
+    ---@param duration number
+    function self:shakeViewportX(amplitude, frequency, duration)
+        table.insert(self.viewportShakes.x, camera.shake.new(amplitude, frequency, duration))
+    end
+
+    ---@param amplitude number
+    ---@param frequency number
+    ---@param duration number
+    function self:shakeViewportY(amplitude, frequency, duration)
+        table.insert(self.viewportShakes.y, camera.shake.new(amplitude, frequency, duration))
     end
 
     ---@param containerW number
@@ -193,8 +342,13 @@ function camera.new(width, height, options)
     ---@param dx number
     ---@param dy number
     function self:move(dx, dy)
-        --self.x, self.y = self.x + dx, self.y + dy
         self.translationX, self.translationY = self.translationX + dx, self.translationY + dy
+    end
+
+    ---@param dx number
+    ---@param dy number
+    function self:moveViewport(dx, dy)
+        self.x, self.y = self.x + dx, self.y + dy
     end
 
     ---@param dt number
