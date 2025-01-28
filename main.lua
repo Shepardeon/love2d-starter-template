@@ -102,7 +102,6 @@ function love.load()
     local scene = shep.scene.new(game)
     local entity = player.new(scene)
 
-    game:addScene(scene)
     game:switchScene(scene.sceneIndex)
     scene:findEntity(entity.uuid)
     local alive = entity:isAlive()
