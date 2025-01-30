@@ -10,5 +10,6 @@ shep.inputManager = require("lib.shep.inputManager")
 shep.scene = require("lib.shep.scene")
 shep.stateMachine = require("lib.shep.stateMachine")
 shep.utils = require("lib.shep.utils")
+shep.shader = require("lib.shep.shader")
 
 return shep
