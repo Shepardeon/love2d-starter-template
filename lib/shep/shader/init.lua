@@ -1,20 +1,19 @@
 local shader = {}
+shader.effects = require('lib.shep.shader.effects')
 
----@param buffer fun(shader: shep.ShaderPipeline): love.Canvas, love.Canvas
+---@param buffer fun(): love.Canvas, love.Canvas
 ---@param shaderObj love.Shader
-function shader.draw(inst, buffer, shaderObj)
-    local front, back = buffer(inst)
+function shader.draw(buffer, shaderObj)
+    local front, back = buffer()
     love.graphics.setCanvas(front)
     love.graphics.clear()
-
-    if not shaderObj == love.graphics.getShader() then
+    if shader ~= love.graphics.getShader() then
         love.graphics.setShader(shaderObj)
     end
-
     love.graphics.draw(back)
 end
 
----@param effect shep.Effect
+---@param effect shep.Effect|fun():shep.Effect
 ---@param width number|nil
 ---@param height number|nil
 function shader.new(effect, width, height)
@@ -22,28 +21,24 @@ function shader.new(effect, width, height)
         width, height = love.window.getMode()
     end
 
+    local front, back = love.graphics.newCanvas(width --[[@as number]], height), love.graphics.newCanvas(width --[[@as number]], height)
+    local buffer = function()
+        back, front = front, back
+        return front, back
+    end
+
     ---@class shep.ShaderPipeline
     ---@field private effects table<number, shep.Effect>
     ---@field private disabled table<string, boolean>
-    ---@field private front love.Canvas
-    ---@field private back love.Canvas
     ---@field private states table
     local self = {}
     self.effects = {}
     self.disabled = {}
-    self.front = love.graphics.newCanvas(width --[[@as number]], height)
-    self.back = love.graphics.newCanvas(width --[[@as number]], height)
-
-    ---@private
-    function self:buffer()
-        self.back, self.front = self.front, self.back
-        return self.front, self.back
-    end
 
     ---@param w number
     ---@param h number
     function self:resize(w, h)
-        self.front, self.back = love.graphics.newCanvas(w,h), love.graphics.newCanvas(w,h)
+        front, back = love.graphics.newCanvas(w,h), love.graphics.newCanvas(w,h)
         return self
     end
 
@@ -66,7 +61,7 @@ function shader.new(effect, width, height)
         self.states.colors.r, self.states.colors.g, self.states.colors.b, self.states.colors.a = love.graphics.getColor()
 
         -- allow to draw scene to front buffer
-        love.graphics.setCanvas((self:buffer())) -- set back buffer as the current canvas
+        love.graphics.setCanvas((buffer())) -- set back buffer as the current canvas
         love.graphics.clear(love.graphics.getBackgroundColor()) -- clear the back buffer
 
         -- User draws here before calling :pop()
@@ -80,16 +75,17 @@ function shader.new(effect, width, height)
 
         -- draw effects
         love.graphics.setColor(self.states.colors.r, self.states.colors.g, self.states.colors.b, self.states.colors.a)
+        love.graphics.setBlendMode("alpha", "premultiplied")
         for _, eff in ipairs(self.effects) do
             if not self.disabled[eff.name] then
-                (eff.draw or shader.draw)(self, self.buffer, eff.shader)
+                (eff.draw or shader.draw)(buffer, eff.shader)
             end
         end
 
         -- present result
         love.graphics.setShader()
         love.graphics.setCanvas(self.states.canvas)
-        love.graphics.draw(self.front, 0, 0)
+        love.graphics.draw(front, 0, 0)
 
         -- restore states
         love.graphics.setBlendMode(self.states.blendmode)

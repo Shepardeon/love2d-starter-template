@@ -92,6 +92,9 @@ function player.new(scene)
     return self
 end
 
+local effect
+local effect
+
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
@@ -117,6 +120,8 @@ function love.load()
     game.events:hook('onJump', function()
         shep.utils.printText('Player jumped!', "I called that from an event!")
     end)
+
+    effect = shep.shader.new(shep.shader.effects.desaturate)
 end
 
 function love.update(dt)
@@ -127,6 +132,50 @@ function love.update(dt)
     game:update(dt)
 end
 
+local function buffer()
+    game.currentScene.back, game.currentScene.front = game.currentScene.front, game.currentScene.back
+    return game.currentScene.front, game.currentScene.back
+end
+
+local state = {}
+local function push()
+    state.canvas = love.graphics.getCanvas()
+    state.shader = love.graphics.getShader()
+    state.fg_r, state.fg_g, state.fg_b, state.fg_a = love.graphics.getColor()
+
+    -- draw scene to front buffer
+    love.graphics.setCanvas((buffer())) -- parens are needed: take only front buffer
+    love.graphics.clear(love.graphics.getBackgroundColor())
+end
+
+local function pop()
+    -- save more state
+    state.blendmode = love.graphics.getBlendMode()
+
+    -- process all shaders
+    love.graphics.setColor(state.fg_r, state.fg_g, state.fg_b, state.fg_a)
+    love.graphics.setBlendMode("alpha", "premultiplied")
+    -- for _,e in ipairs(chain) do
+    --   if not disabled[e.name] then
+    --     (e.draw or moonshine.draw_shader)(buffer, e.shader)
+    --   end
+    -- end
+
+    local result = shep.shader.effects.desaturate().shader
+    shep.shader.draw(buffer, result)
+
+    -- present result
+    love.graphics.setShader()
+    love.graphics.setCanvas(state.canvas)
+    love.graphics.draw(game.currentScene.front)
+
+    -- restore state
+    love.graphics.setBlendMode(state.blendmode)
+    love.graphics.setShader(state.shader)
+end
+
 function love.draw()
+    push()
     game:draw()
+    pop()
 end

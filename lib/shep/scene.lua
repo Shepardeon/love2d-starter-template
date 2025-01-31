@@ -13,7 +13,8 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
     --- @class shep.Scene
     local self = {}
     self.entities = {}
-    self.canvas = love.graphics.newCanvas(game.window.width, game.window.height)
+    self.front = love.graphics.newCanvas(game.window.width, game.window.height)
+    self.back = love.graphics.newCanvas(game.window.width, game.window.height)
     --- @type shep.Camera
     self.camera = camera.new(game.window.width, game.window.height, { 
         center = true,
@@ -49,7 +50,7 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
 
     --- @param this shep.Scene
     self.draw = drawFn or function(this)
-        love.graphics.setCanvas(this.canvas)
+        love.graphics.setCanvas(this.front)
         love.graphics.clear()
 
         this.camera:push()
@@ -80,7 +81,7 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
         -- Draw the canvas
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.setBlendMode('alpha', 'premultiplied')
-        love.graphics.draw(this.canvas, 0, 0, 0, game.window.scaleX, game.window.scaleY)
+        love.graphics.draw(this.front, 0, 0, 0, game.window.scaleX, game.window.scaleY)
         love.graphics.setBlendMode('alpha')
     end
 
