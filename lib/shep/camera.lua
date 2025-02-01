@@ -98,8 +98,6 @@ end
 ---@class shep.CameraOptions
 local defaultCamOptions = {
     ---@type boolean|nil
-    resizable = false,
-    ---@type boolean|nil
     maintainAspectRatio = false,
     ---@type boolean|nil
     center = false,
@@ -125,7 +123,6 @@ local defaultLayerOptions = {
 ---@return shep.Camera
 function camera.new(width, height, options)
     --- @class shep.Camera
-    --- @field private resizable boolean
     --- @field private maintainAspectRatio boolean
     --- @field private center boolean
     --- @field private aspectRatioScale number
@@ -153,8 +150,8 @@ function camera.new(width, height, options)
     self.height = height
     self.translationX = 0
     self.translationY = 0
-    self.offsetX = width / 2
-    self.offsetY = height / 2
+    self.offsetX = 0
+    self.offsetY = 0
     self.scale = 1
     self.rotation = 0
 
@@ -183,8 +180,6 @@ function camera.new(width, height, options)
     end
 
     function self:update()
-        if self.resizable then self:resizingFunction(self:getContainerDimensions()) end
-
         local xShakeAmount, yShakeAmount = self:sumShakes(self.shakes.x), self:sumShakes(self.shakes.y)
         local xViewportShakeAmount, yViewportShakeAmount = self:sumShakes(self.viewportShakes.x), self:sumShakes(self.viewportShakes.y)
 
@@ -238,7 +233,7 @@ function camera.new(width, height, options)
 
     ---@param containerW number
     ---@param containerH number
-    function self:resizingFunction(containerW, containerH)
+    function self:resize(containerW, containerH)
         local scaleW, scaleH = containerW / self.width, containerH / self.height
 
         if self.maintainAspectRatio then
@@ -275,9 +270,9 @@ function camera.new(width, height, options)
         layer.push = function()
             love.graphics.push(layer.mode)
             love.graphics.origin()
-            love.graphics.translate(-self.x + self.offsetX, -self.y + self.offsetY)
+            love.graphics.translate(-self.x + self.offsetX, self.y + self.offsetY)
             love.graphics.rotate(self.rotation)
-            love.graphics.scale(self.scale * self.aspectRatioScale * layer.scale)
+            love.graphics.scale(layer.scale)
             love.graphics.translate(-self.translationX * layer.speedToScaleRatio, -self.translationY * layer.speedToScaleRatio)
         end
         layer.pop = love.graphics.pop

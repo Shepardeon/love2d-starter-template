@@ -29,10 +29,10 @@ function player.new(scene)
 
     ---@param self Player
     local draw = function(self)
-        self.spriteAtlas:drawQuad('walk_right1', -150, -150)
-        self.spriteAtlas:drawQuad('walk_right2', -150, -100)
-        self.spriteAtlas:drawQuad('walk_right3', -150, -50)
-        
+        self.spriteAtlas:drawQuad('walk_right1', 250, 150)
+        self.spriteAtlas:drawQuad('walk_right2', 250, 100)
+        self.spriteAtlas:drawQuad('walk_right3', 250, 50)
+
         self.animator:draw(self.x, self.y)
         self.spriteAtlas:draw()
     end
@@ -94,14 +94,13 @@ end
 
 local effect
 local effect
-
+local canvas
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
+    love.graphics.setBackgroundColor(0.1, 0.1, 0.1)
 
     game = shep.game.new()
-
-    game:resizeGameWindow(1)
-
+    
     local scene = shep.scene.new(game)
     local entity = player.new(scene)
 
@@ -121,7 +120,18 @@ function love.load()
         shep.utils.printText('Player jumped!', "I called that from an event!")
     end)
 
+    game.events:hook('gameResized', function(w, h, scale)
+        print('Game resized to', w, h, 'with scale', scale)
+        canvas = love.graphics.newCanvas(game.window.width * scale, game.window.height * scale)
+        effect:resize(game.window.width * scale, game.window.height * scale)
+        game.currentScene.camera:resize(w, h)
+    end)
+
+    canvas = love.graphics.newCanvas(game.window.width, game.window.height)
     effect = shep.shader.new(shep.shader.effects.desaturate)
+    effect:send('desaturate', 'saturation', 0)
+
+    game:resizeGameWindow(2)
 end
 
 function love.update(dt)
@@ -132,50 +142,38 @@ function love.update(dt)
     game:update(dt)
 end
 
-local function buffer()
-    game.currentScene.back, game.currentScene.front = game.currentScene.front, game.currentScene.back
-    return game.currentScene.front, game.currentScene.back
+function love.resize(w, h)
+    local newScale = math.min(w / game.window.width, h / game.window.height)
+    game:resizeGameWindow(newScale)
 end
 
-local state = {}
-local function push()
-    state.canvas = love.graphics.getCanvas()
-    state.shader = love.graphics.getShader()
-    state.fg_r, state.fg_g, state.fg_b, state.fg_a = love.graphics.getColor()
-
-    -- draw scene to front buffer
-    love.graphics.setCanvas((buffer())) -- parens are needed: take only front buffer
-    love.graphics.clear(love.graphics.getBackgroundColor())
-end
-
-local function pop()
-    -- save more state
-    state.blendmode = love.graphics.getBlendMode()
-
-    -- process all shaders
-    love.graphics.setColor(state.fg_r, state.fg_g, state.fg_b, state.fg_a)
-    love.graphics.setBlendMode("alpha", "premultiplied")
-    -- for _,e in ipairs(chain) do
-    --   if not disabled[e.name] then
-    --     (e.draw or moonshine.draw_shader)(buffer, e.shader)
-    --   end
-    -- end
-
-    local result = shep.shader.effects.desaturate().shader
-    shep.shader.draw(buffer, result)
-
-    -- present result
-    love.graphics.setShader()
-    love.graphics.setCanvas(state.canvas)
-    love.graphics.draw(game.currentScene.front)
-
-    -- restore state
-    love.graphics.setBlendMode(state.blendmode)
-    love.graphics.setShader(state.shader)
-end
-
+--TODO: rework everything here in a rendering pipeline
 function love.draw()
-    push()
-    game:draw()
-    pop()
+    love.graphics.setCanvas(canvas)
+    love.graphics.clear()
+
+    effect:push()
+    game.currentScene.camera:push()
+        game.currentScene.camera:push('far')
+        game:draw()
+        game.currentScene.camera:pop('far')
+
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.rectangle("fill", 0, 0, game.window.width, game.window.height)
+    love.graphics.setColor(1, 1, 1, 1)
+
+        game:draw()
+
+        game.currentScene.camera:push('near')
+        game:draw()
+        game.currentScene.camera:pop('near')
+    game.currentScene.camera:pop()
+    effect:pop()
+
+    -- Draw the canvas
+    love.graphics.setCanvas()
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setBlendMode('alpha', 'premultiplied')
+    love.graphics.draw(canvas, 0, 0, 0, game.window.scaleX, game.window.scaleY)
+    love.graphics.setBlendMode('alpha')
 end

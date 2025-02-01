@@ -38,6 +38,8 @@ function game.new(windowOptions)
     self.events = eventManager.new()
     self.input = inputManager.new()
 
+    self.events:addEvent('gameResized')
+
     ---@param scene shep.Scene
     ---@return number # Scene index
     function self:addScene(scene)
@@ -62,9 +64,11 @@ function game.new(windowOptions)
 
     ---@param scale number
     function self:resizeGameWindow(scale)
-        love.window.setMode(self.window.width * scale, self.window.height * scale)
+        love.window.setMode(self.window.width * scale, self.window.height * scale, { resizable = true })
         self.window.scaleX = scale
         self.window.scaleY = scale
+
+        self.events:fire('gameResized', self.window.width, self.window.height, scale)
     end
 
     ---@return number

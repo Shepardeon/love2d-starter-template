@@ -13,8 +13,6 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
     --- @class shep.Scene
     local self = {}
     self.entities = {}
-    self.front = love.graphics.newCanvas(game.window.width, game.window.height)
-    self.back = love.graphics.newCanvas(game.window.width, game.window.height)
     --- @type shep.Camera
     self.camera = camera.new(game.window.width, game.window.height, { 
         center = true,
@@ -44,45 +42,16 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
         this.camera:update()
         -- Test: follow the first entity
         if #this.entities > 0 then
-            this.camera:followLockScreenOutside(dt, this.entities[1].x, this.entities[1].y, -150, -150, 150, 150)
+            this.camera:followLockScreenOutside(dt, this.entities[1].x, this.entities[1].y, -200, 0, 200, 0)
         end
     end
 
     --- @param this shep.Scene
     self.draw = drawFn or function(this)
-        love.graphics.setCanvas(this.front)
-        love.graphics.clear()
-
-        this.camera:push()
-            this.camera:push('far')
-                for i = 1, #this.entities do
-                    local entity = this.entities[i]
-                    entity:draw()
-                end
-            this.camera:pop('far')
-
-            -- Draw everything on the canvas from the camera's perspective
-            for i = 1, #this.entities do
-                local entity = this.entities[i]
-                entity:draw()
-            end
-
-            this.camera:push('near')
-                for i = 1, #this.entities do
-                    local entity = this.entities[i]
-                    entity:draw()
-                end
-            this.camera:pop('near')
-
-        this.camera:pop()
-
-        love.graphics.setCanvas()
-
-        -- Draw the canvas
-        love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.setBlendMode('alpha', 'premultiplied')
-        love.graphics.draw(this.front, 0, 0, 0, game.window.scaleX, game.window.scaleY)
-        love.graphics.setBlendMode('alpha')
+        for i = 1, #this.entities do
+            local entity = this.entities[i]
+            entity:draw()
+        end
     end
 
     --- @param entity shep.Entity

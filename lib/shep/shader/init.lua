@@ -30,7 +30,7 @@ function shader.new(effect, width, height)
     ---@class shep.ShaderPipeline
     ---@field private effects table<number, shep.Effect>
     ---@field private disabled table<string, boolean>
-    ---@field private states table
+    ---@field private state table
     local self = {}
     self.effects = {}
     self.disabled = {}
@@ -52,13 +52,12 @@ function shader.new(effect, width, height)
         return self
     end
 
-    self.states = {}
+    self.state = {}
     function self:push()
        -- save states
-        self.states.canvas = love.graphics.getCanvas()
-        self.states.shader = love.graphics.getShader()
-        self.states.colors = {}
-        self.states.colors.r, self.states.colors.g, self.states.colors.b, self.states.colors.a = love.graphics.getColor()
+        self.state.canvas = love.graphics.getCanvas()
+        self.state.shader = love.graphics.getShader()
+        self.state.fg_r, self.state.fg_g, self.state.fg_b, self.state.fg_a = love.graphics.getColor()
 
         -- allow to draw scene to front buffer
         love.graphics.setCanvas((buffer())) -- set back buffer as the current canvas
@@ -71,10 +70,10 @@ function shader.new(effect, width, height)
         -- User has drawn to the back buffer here
 
         -- save more states
-        self.states.blendmode = love.graphics.getBlendMode()
+        self.state.blendmode = love.graphics.getBlendMode()
 
         -- draw effects
-        love.graphics.setColor(self.states.colors.r, self.states.colors.g, self.states.colors.b, self.states.colors.a)
+        love.graphics.setColor(self.state.fg_r, self.state.fg_g, self.state.fg_b, self.state.fg_a)
         love.graphics.setBlendMode("alpha", "premultiplied")
         for _, eff in ipairs(self.effects) do
             if not self.disabled[eff.name] then
@@ -84,12 +83,12 @@ function shader.new(effect, width, height)
 
         -- present result
         love.graphics.setShader()
-        love.graphics.setCanvas(self.states.canvas)
-        love.graphics.draw(front, 0, 0)
+        love.graphics.setCanvas(self.state.canvas)
+        love.graphics.draw(front)
 
         -- restore states
-        love.graphics.setBlendMode(self.states.blendmode)
-        love.graphics.setShader(self.states.shader)
+        love.graphics.setBlendMode(self.state.blendmode)
+        love.graphics.setShader(self.state.shader)
     end
 
     ---@param name string -- Name of the effect to disable
@@ -111,6 +110,20 @@ function shader.new(effect, width, height)
         if name then
             self.disabled[name] = nil
             return self:enable(...)
+        end
+
+        return self
+    end
+
+    ---@param effectName string -- Name of the effect
+    ---@param param string -- Name of the parameter to set
+    ---@param value any -- Value to set the parameter to
+    ---@return shep.ShaderPipeline
+    function self:send(effectName, param, value)
+        for _, eff in ipairs(self.effects) do
+            if eff.name == effectName then
+                eff.setters[param](value)
+            end
         end
 
         return self
