@@ -1,4 +1,5 @@
 local shep = require('lib.shep')
+local timer = require('lib.hump.timer')
 
 ---@type shep.Game
 local game
@@ -99,6 +100,8 @@ function player.new(scene)
     return self
 end
 
+local renderPipeline
+local shaderParams = { saturation = 1 }
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     love.graphics.setBackgroundColor(0.1, 0.1, 0.1)
@@ -154,7 +157,9 @@ function love.load()
         camera:pop('near')
     end)
 
-    renderer:getRenderPipeline('_main'):next(shep.shader.effects.desaturate)
+    renderPipeline = renderer:getRenderPipeline('_main')
+    renderPipeline:next(shep.shader.effects.desaturate)
+    game.globalTimer:tween(8, shaderParams, { saturation = 0 }, 'in-out-cubic')
 
     renderer:addRenderPass('ui', 2, shep.shader.effects.passthrough, function()
         love.graphics.print('FPS:' .. love.timer.getFPS() , 10, 10)
@@ -165,6 +170,7 @@ function love.update(dt)
     if (game.input:pressed('jump')) then
         game.events:fire('onJump')
     end
+    renderPipeline:send('desaturate', 'saturation', shaderParams.saturation)
 
     camera:update()
     -- Test: follow the player
