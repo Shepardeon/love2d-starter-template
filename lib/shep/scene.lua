@@ -1,7 +1,6 @@
 local scene = {}
 local lume = require('lib.lume')
 local bump = require('lib.bump')
-local camera = require('lib.shep.camera')
 
 ---@param game shep.Game
 ---@param updateFn fun(self: shep.Scene, dt: number)|nil
@@ -13,14 +12,6 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
     --- @class shep.Scene
     local self = {}
     self.entities = {}
-    --- @type shep.Camera
-    self.camera = camera.new(game.window.width, game.window.height, { 
-        center = true,
-        maintainAspectRatio = true,
-        smoothingFunction = camera.smoothingFunctions.linear(75)
-    })
-    self.camera:addLayer('far', 0.5)
-    self.camera:addLayer('near', 2)
     self.world = bump.newWorld()
 
     self.enable = enableFn or function(this)
@@ -37,12 +28,6 @@ function scene.new(game, updateFn, drawFn, enableFn, disableFn)
         for i = #this.entities, 1, -1 do
             local entity = this.entities[i]
             entity:update(dt)
-        end
-
-        this.camera:update()
-        -- Test: follow the first entity
-        if #this.entities > 0 then
-            this.camera:followLockScreenOutside(dt, this.entities[1].x, this.entities[1].y, -200, 0, 200, 0)
         end
     end
 

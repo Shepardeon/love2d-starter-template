@@ -1,10 +1,10 @@
 local effect = {}
 
 ---@param name string -- Name of the effect
----@param shader love.Shader -- Love's compiled shader object
+---@param shader love.Shader|nil -- Love's compiled shader object
 ---@param setters table<string, fun(val: any)>|nil -- Table of functions to set the shader's data
 ---@param defaults table<string, any>|nil -- Table of default values for the shader
----@param draw fun(inst: shep.ShaderPipeline, buffer: fun(shader: shep.ShaderPipeline): (love.Canvas, love.Canvas), shader: love.Shader)|nil -- Function to draw the effect if needed
+---@param draw fun(buffer: fun(): (love.Canvas, love.Canvas), shader: love.Shader)|nil -- Function to draw the effect if needed
 ---@return shep.Effect
 function effect.new(name, shader, setters, defaults, draw)
     --- @class shep.Effect

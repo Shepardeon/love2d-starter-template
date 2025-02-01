@@ -2,9 +2,16 @@ local shep = require('lib.shep')
 
 ---@type shep.Game
 local game
+---@type shep.Renderer
+local renderer
+---@type shep.Camera
+local camera
+---@type Player
+local myPlayer
+
+local gameScale = 1
 
 local player = {}
-
 ---@param scene shep.Scene
 function player.new(scene)
     ---@param self Player
@@ -29,9 +36,9 @@ function player.new(scene)
 
     ---@param self Player
     local draw = function(self)
-        self.spriteAtlas:drawQuad('walk_right1', 250, 150)
-        self.spriteAtlas:drawQuad('walk_right2', 250, 100)
-        self.spriteAtlas:drawQuad('walk_right3', 250, 50)
+        self.spriteAtlas:drawQuad('walk_right1', 150, -150)
+        self.spriteAtlas:drawQuad('walk_right2', 150, -100)
+        self.spriteAtlas:drawQuad('walk_right3', 150, -50)
 
         self.animator:draw(self.x, self.y)
         self.spriteAtlas:draw()
@@ -92,27 +99,34 @@ function player.new(scene)
     return self
 end
 
-local effect
-local effect
-local canvas
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     love.graphics.setBackgroundColor(0.1, 0.1, 0.1)
 
     game = shep.game.new()
-    
+    renderer = shep.renderer.new(game.window.width, game.window.height, gameScale,
+    {
+        center = true,
+        maintainAspectRatio = true,
+        smoothingFunction = shep.camera.smoothingFunctions.linear(75)
+    })
+
+    camera = renderer:getCamera()
+    camera:addLayer('far', 0.5)
+    camera:addLayer('near', 2)
+
     local scene = shep.scene.new(game)
-    local entity = player.new(scene)
+    myPlayer = player.new(scene)
 
     game:switchScene(scene.sceneIndex)
-    scene:findEntity(entity.uuid)
-    local alive = entity:isAlive()
+    scene:findEntity(myPlayer.uuid)
+    local alive = myPlayer:isAlive()
 
     shep.utils.printAll("The entity is alive ?", alive)
 
     game.input:bind('space', 'jump')
     game.input:bind('s', function()
-        scene.camera:shake(6, 60, 0.4)
+        camera:shake(6, 60, 0.4)
     end)
 
     game.events:addEvent('onJump')
@@ -121,23 +135,40 @@ function love.load()
     end)
 
     game.events:hook('gameResized', function(w, h, scale)
-        print('Game resized to', w, h, 'with scale', scale)
-        canvas = love.graphics.newCanvas(game.window.width * scale, game.window.height * scale)
-        effect:resize(game.window.width * scale, game.window.height * scale)
-        game.currentScene.camera:resize(w, h)
+        renderer:resize(w, h, scale)
     end)
 
-    canvas = love.graphics.newCanvas(game.window.width, game.window.height)
-    effect = shep.shader.new(shep.shader.effects.desaturate)
-    effect:send('desaturate', 'saturation', 0)
+    game:resizeGameWindow(gameScale)
 
-    game:resizeGameWindow(2)
+    renderer:setDrawFunction('_main', function()
+        camera:push('far')
+        game:draw()
+        camera:pop('far')
+
+        camera:push()
+        game:draw()
+        camera:pop()
+
+        camera:push('near')
+        game:draw()
+        camera:pop('near')
+    end)
+
+    renderer:getRenderPipeline('_main'):next(shep.shader.effects.desaturate)
+
+    renderer:addRenderPass('ui', 2, shep.shader.effects.passthrough, function()
+        love.graphics.print('FPS:' .. love.timer.getFPS() , 10, 10)
+    end)
 end
 
 function love.update(dt)
     if (game.input:pressed('jump')) then
         game.events:fire('onJump')
     end
+
+    camera:update()
+    -- Test: follow the player
+    camera:followLockScreenOutside(dt, myPlayer.x, myPlayer.y, -200, 0, 200, 0)
 
     game:update(dt)
 end
@@ -149,31 +180,5 @@ end
 
 --TODO: rework everything here in a rendering pipeline
 function love.draw()
-    love.graphics.setCanvas(canvas)
-    love.graphics.clear()
-
-    effect:push()
-    game.currentScene.camera:push()
-        game.currentScene.camera:push('far')
-        game:draw()
-        game.currentScene.camera:pop('far')
-
-    love.graphics.setColor(0, 0, 0, 1)
-    love.graphics.rectangle("fill", 0, 0, game.window.width, game.window.height)
-    love.graphics.setColor(1, 1, 1, 1)
-
-        game:draw()
-
-        game.currentScene.camera:push('near')
-        game:draw()
-        game.currentScene.camera:pop('near')
-    game.currentScene.camera:pop()
-    effect:pop()
-
-    -- Draw the canvas
-    love.graphics.setCanvas()
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.setBlendMode('alpha', 'premultiplied')
-    love.graphics.draw(canvas, 0, 0, 0, game.window.scaleX, game.window.scaleY)
-    love.graphics.setBlendMode('alpha')
+    renderer:draw()
 end
