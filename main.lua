@@ -102,6 +102,8 @@ end
 
 local renderPipeline
 local shaderParams = { saturation = 1 }
+local images = {}
+local finishedLoading = false
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     love.graphics.setBackgroundColor(0.1, 0.1, 0.1)
@@ -164,6 +166,13 @@ function love.load()
     renderer:addRenderPass('ui', 2, shep.shader.effects.passthrough, function()
         love.graphics.print('FPS:' .. love.timer.getFPS() , 10, 10)
     end)
+
+    -- Test loading an image
+    shep.loader:newImage(images, 'testImage', 'assets/ranger_f.png')
+    shep.loader:start(nil, function()
+        shep.utils.printAll("All data loaded", "Image loaded", images.testImage)
+        finishedLoading = true
+    end)
 end
 
 function love.update(dt)
@@ -177,6 +186,10 @@ function love.update(dt)
     camera:followLockScreenOutside(dt, myPlayer.x, myPlayer.y, -200, 0, 200, 0)
 
     game:update(dt)
+
+    if not finishedLoading then
+        shep.loader:update()
+    end
 end
 
 function love.resize(w, h)
@@ -187,4 +200,11 @@ end
 --TODO: rework everything here in a rendering pipeline
 function love.draw()
     renderer:draw()
+
+    if not finishedLoading then
+        love.graphics.print('Loading...', 10, 25)
+    else
+        love.graphics.print('Loaded!', 10, 25)
+        love.graphics.draw(images.testImage, 10, 50)
+    end
 end

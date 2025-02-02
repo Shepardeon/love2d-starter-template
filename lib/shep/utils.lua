@@ -68,13 +68,14 @@ function utils.repeatTable(val, n)
     return t
 end
 
--- function utils.repeat(val, n)
---     local t = {}
---     for i = 1, n do
---         t[i] = val
---     end
---     return t
--- end
+---@param arr table
+function utils.arrayShift(arr)
+    return table.remove(arr, 1)
+end
+
+function utils.arrayPop(arr)
+    return table.remove(arr)
+end
 
 function utils.printAll(...)
     local args = {...}
@@ -86,6 +87,13 @@ end
 function utils.printText(...)
     local args = {...}
     print(table.concat(args, " "))
+end
+
+---@param t table
+function utils.printTable(t)
+    for k, v in pairs(t) do
+        print(k, '=>', v)
+    end
 end
 
 return utils
