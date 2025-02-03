@@ -96,9 +96,9 @@ function renderer.new(gameWidth, gameHeight, renderScale, cameraOptions)
         self.height = newGameHeight
         self.renderScale = newRenderScale
 
+        self.mainCanvas = love.graphics.newCanvas(newGameWidth * newRenderScale, newGameHeight * newRenderScale)
         self.mainCamera:resize(newGameWidth, newGameHeight)
 
-        self.mainCanvas = love.graphics.newCanvas(newGameWidth * newRenderScale, newGameHeight * newRenderScale)
         for _, pass in ipairs(self.renderPasses) do
             pass.pipeline:resize(newGameWidth * newRenderScale, newGameHeight * newRenderScale)
             pass.canvas = love.graphics.newCanvas(newGameWidth * newRenderScale, newGameHeight * newRenderScale)
@@ -124,7 +124,7 @@ function renderer.new(gameWidth, gameHeight, renderScale, cameraOptions)
             love.graphics.setCanvas(self.mainCanvas)
             love.graphics.setColor(1, 1, 1, 1)
             love.graphics.setBlendMode("alpha", "premultiplied")
-            love.graphics.draw(pass.canvas, 0, 0, 0, self.renderScale, self.renderScale)
+            love.graphics.draw(pass.canvas, 0, 0, 0)
             love.graphics.setBlendMode("alpha")
             drawnPasses = drawnPasses + 1
         end

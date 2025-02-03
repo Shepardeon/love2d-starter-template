@@ -165,6 +165,13 @@ function love.load()
 
     renderer:addRenderPass('ui', 2, shep.shader.effects.passthrough, function()
         love.graphics.print('FPS:' .. love.timer.getFPS() , 10, 10)
+
+        if not finishedLoading then
+            love.graphics.print('Loading...', 10, 25)
+        else
+            love.graphics.print('Loaded!', 10, 25)
+            love.graphics.draw(images.testImage, 10, 50)
+        end
     end)
 
     -- Test loading an image
@@ -200,11 +207,4 @@ end
 --TODO: rework everything here in a rendering pipeline
 function love.draw()
     renderer:draw()
-
-    if not finishedLoading then
-        love.graphics.print('Loading...', 10, 25)
-    else
-        love.graphics.print('Loaded!', 10, 25)
-        love.graphics.draw(images.testImage, 10, 50)
-    end
 end
