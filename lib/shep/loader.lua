@@ -172,7 +172,7 @@ else
 
     ---@private
     function loader:requestResourceToThread()
-        self.resourceBeingLoaded = utils.arrayPop(self.pending)
+        self.resourceBeingLoaded = utils.popTable(self.pending)
         local requestKey = resources[self.resourceBeingLoaded.kind].requestKey
         local channel = love.thread.getChannel(channelPrefix .. requestKey)
         channel:push(self.resourceBeingLoaded.requestParams)

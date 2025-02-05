@@ -1,5 +1,4 @@
 local shep = require('lib.shep')
-local timer = require('lib.hump.timer')
 
 ---@type shep.Game
 local game
@@ -11,6 +10,8 @@ local camera
 local myPlayer
 
 local gameScale = 1
+
+love.run = shep.debug.run
 
 local player = {}
 ---@param scene shep.Scene
@@ -207,4 +208,5 @@ end
 --TODO: rework everything here in a rendering pipeline
 function love.draw()
     renderer:draw()
+    shep.debug.draw(99, 0, 1, 1)
 end

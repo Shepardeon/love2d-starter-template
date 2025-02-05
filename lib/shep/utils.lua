@@ -68,13 +68,23 @@ function utils.repeatTable(val, n)
     return t
 end
 
----@param arr table
-function utils.arrayShift(arr)
-    return table.remove(arr, 1)
+---@param tbl table
+function utils.shiftTable(tbl)
+    return table.remove(tbl, 1)
 end
 
-function utils.arrayPop(arr)
-    return table.remove(arr)
+---@param tbl table
+function utils.popTable(tbl)
+    return table.remove(tbl)
+end
+
+---@param tbl table
+function utils.avgTable(tbl)
+    local sum = 0
+    for _, v in ipairs(tbl) do
+        sum = sum + v
+    end
+    return sum / #tbl
 end
 
 function utils.printAll(...)
