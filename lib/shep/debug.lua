@@ -52,20 +52,23 @@ function debug.run()
 
         if love.timer then
             dataPoint.updateTime = love.timer.getTime() * 1000 - startTime
-            startTime = love.timer.getTime() * 1000
         end
 
 		if love.graphics and love.graphics.isActive() then
 			love.graphics.origin()
 			love.graphics.clear(love.graphics.getBackgroundColor())
 
-			if love.draw then love.draw() end
+            if love.timer then
+                startTime = love.timer.getTime() * 1000
+            end
 
-			love.graphics.present()
+			if love.draw then love.draw() end
 
             if love.timer then
                 dataPoint.drawTime = love.timer.getTime() * 1000 - startTime
             end
+
+			love.graphics.present()
 		end
 
 		if love.timer then love.timer.sleep(0.001) end
