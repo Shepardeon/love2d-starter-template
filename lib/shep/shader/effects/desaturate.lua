@@ -1,7 +1,7 @@
-local effect = require('lib.shep.shader.effect')
+local Effect = require('lib.shep.shader.effect')
 
 return function()
-    local desaturate = effect.new(
+    local desaturate = Effect(
         'desaturate',
         love.graphics.newShader('assets/shaders/desaturate.glsl')
     )

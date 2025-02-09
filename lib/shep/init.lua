@@ -4,19 +4,22 @@ local shep = { _version = "1.0.0" }
 Object = require("lib.classic")
 -- Load all the modules
 
-shep.animator = require('lib.shep.animator')
-shep.atlas = require("lib.shep.atlas")
-shep.camera = require("lib.shep.camera")
+-- Modules
 shep.debug = require("lib.shep.debug")
-shep.entity = require("lib.shep.entity")
-shep.eventManager = require("lib.shep.eventManager")
-shep.game = require("lib.shep.game")
-shep.inputManager = require("lib.shep.inputManager")
 shep.loader = require("lib.shep.loader")
-shep.renderer = require("lib.shep.renderer")
-shep.scene = require("lib.shep.scene")
-shep.stateMachine = require("lib.shep.stateMachine")
 shep.utils = require("lib.shep.utils")
-shep.shader = require("lib.shep.shader")
+
+-- Classes
+shep.Animator = require('lib.shep.animator')
+shep.Atlas = require("lib.shep.atlas")
+shep.Camera = require("lib.shep.camera")
+shep.Entity = require("lib.shep.entity")
+shep.EventManager = require("lib.shep.eventManager")
+shep.Game = require("lib.shep.game")
+shep.InputManager = require("lib.shep.inputManager")
+shep.Renderer = require("lib.shep.renderer")
+shep.Scene = require("lib.shep.scene")
+shep.StateMachine = require("lib.shep.stateMachine")
+shep.Shader = require("lib.shep.shader")
 
 return shep

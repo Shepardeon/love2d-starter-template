@@ -7,8 +7,8 @@ local timer = require("lib.hump.timer")
 ---@field private currentScene shep.Scene
 ---@field private timeScale number
 ---@field window table<string, number>
----@field events EventManager
----@field input InputManager
+---@field events shep.EventManager
+---@field input shep.InputManager
 local Game = Object:extend()
 
 ---@class shep.GameWindow
@@ -30,9 +30,9 @@ function Game:new(windowOptions)
     self.timeScale = 1
     self.window =  windowOptions or defaultWindowOptions
 
-    self.globalTimer = timer.new()
-    self.events = eventManager.new()
-    self.input = inputManager.new()
+    self.globalTimer = timer()
+    self.events = eventManager()
+    self.input = inputManager()
 
     self.events:addEvent('gameResized')
 end

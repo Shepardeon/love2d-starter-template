@@ -15,7 +15,7 @@ love.run = shep.debug.run
 
 --#region Player
 ---@class Player: shep.Entity
-local Player = shep.entity:extend()
+local Player = shep.Entity:extend()
 
 ---@param scene shep.Scene
 function Player:new(scene)
@@ -25,14 +25,14 @@ function Player:new(scene)
     self.y = 0
 
     --- Test atlas
-    self.spriteAtlas = shep.atlas.new('assets/ranger_f.png', {
+    self.spriteAtlas = shep.Atlas('assets/ranger_f.png', {
         tileWidth = 15*2,
         tileHeight = 18*2,
         spacingX = 1,
     })
 
     --- Animator with shared atlas => will use sprite batching
-    self.animator = shep.animator.new(self.spriteAtlas)
+    self.animator = shep.Animator(self.spriteAtlas)
 
     self.spriteAtlas:addQuad('walk_right1', 0, 1)
     self.spriteAtlas:addQuad('walk_right2', 1, 1)
@@ -50,7 +50,7 @@ function Player:new(scene)
     self.currentAnimation = 'walk_right'
 
     ---@type shep.StateMachine
-    self.stateMachine = shep.stateMachine()
+    self.stateMachine = shep.StateMachine()
 
     self.stateMachine:addState(self.idleState, nil, self.exitIdleState)
     self.stateMachine:addState(self.jumpState, self.enterJumpState)
@@ -109,19 +109,19 @@ function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     love.graphics.setBackgroundColor(0.1, 0.1, 0.1)
 
-    game = shep.game()
-    renderer = shep.renderer.new(game.window.width, game.window.height, gameScale,
+    game = shep.Game()
+    renderer = shep.Renderer(game.window.width, game.window.height, gameScale,
     {
         center = true,
         maintainAspectRatio = true,
-        smoothingFunction = shep.camera.smoothingFunctions.linear(75)
+        smoothingFunction = shep.Camera.smoothingFunctions.linear(75)
     })
 
     camera = renderer:getCamera()
     camera:addLayer('far', 0.5)
     camera:addLayer('near', 2)
 
-    local scene = shep.scene(game)
+    local scene = shep.Scene(game)
     myPlayer = Player(scene)
 
     game:switchScene(scene.sceneIndex)
@@ -161,10 +161,10 @@ function love.load()
     end)
 
     renderPipeline = renderer:getRenderPipeline('_main')
-    renderPipeline:next(shep.shader.effects.desaturate)
+    renderPipeline:next(shep.Shader.Effects.desaturate)
     game.globalTimer:tween(8, shaderParams, { saturation = 0 }, 'in-out-cubic')
 
-    renderer:addRenderPass('ui', 2, shep.shader.effects.passthrough, function()
+    renderer:addRenderPass('ui', 2, shep.Shader.Effects.passthrough, function()
         love.graphics.print('FPS:' .. love.timer.getFPS() , 10, 10)
 
         if not finishedLoading then
