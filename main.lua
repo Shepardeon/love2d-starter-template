@@ -13,41 +13,14 @@ local gameScale = 1
 
 love.run = shep.debug.run
 
-local player = {}
+--#region Player
+---@class Player: shep.Entity
+local Player = shep.entity:extend()
+
 ---@param scene shep.Scene
-function player.new(scene)
-    ---@param self Player
-    ---@param dt number
-    local update = function(self, dt)
-        self.x = self.x + 100 * dt
-        self.stateMachine:update(dt)
-        self.animator:update(dt)
+function Player:new(scene)
+    self.super.new(self, scene)
 
-        if scene.game.input:pressed('jump') then
-            self.stateMachine:changeState(self.jumpState)
-
-            if self.currentAnimation == 'walk_right' then
-                self.currentAnimation = 'walk_left'
-            else
-                self.currentAnimation = 'walk_right'
-            end
-
-            self.animator:setAnimation(self.currentAnimation)
-        end
-    end
-
-    ---@param self Player
-    local draw = function(self)
-        self.spriteAtlas:drawQuad('walk_right1', 150, -150)
-        self.spriteAtlas:drawQuad('walk_right2', 150, -100)
-        self.spriteAtlas:drawQuad('walk_right3', 150, -50)
-
-        self.animator:draw(self.x, self.y)
-        self.spriteAtlas:draw()
-    end
-
-    ---@class Player: shep.Entity
-    local self = shep.entity.new(scene, update, draw)
     self.x = -450
     self.y = 0
 
@@ -76,30 +49,57 @@ function player.new(scene)
 
     self.currentAnimation = 'walk_right'
 
-    self.stateMachine = shep.stateMachine.new()
-
-    function self:idleState()
-        print("I am in idle state")
-    end
-
-    function self:exitIdleState()
-        print("I am exiting idle state")
-    end
-
-    function self:jumpState()
-        print("I am in jump state")
-    end
-
-    function self:enterJumpState()
-        print("I am entering jump state")
-    end
+    ---@type shep.StateMachine
+    self.stateMachine = shep.stateMachine()
 
     self.stateMachine:addState(self.idleState, nil, self.exitIdleState)
     self.stateMachine:addState(self.jumpState, self.enterJumpState)
     self.stateMachine:changeState(self.idleState)
-
-    return self
 end
+
+function Player:update(dt)
+    self.x = self.x + 100 * dt
+    self.stateMachine:update(dt)
+    self.animator:update(dt)
+
+    if self.scene.game.input:pressed('jump') then
+        self.stateMachine:changeState(self.jumpState)
+
+        if self.currentAnimation == 'walk_right' then
+            self.currentAnimation = 'walk_left'
+        else
+            self.currentAnimation = 'walk_right'
+        end
+
+        self.animator:setAnimation(self.currentAnimation)
+    end
+end
+
+function Player:draw()
+    self.spriteAtlas:drawQuad('walk_right1', 150, -150)
+    self.spriteAtlas:drawQuad('walk_right2', 150, -100)
+    self.spriteAtlas:drawQuad('walk_right3', 150, -50)
+
+    self.animator:draw(self.x, self.y)
+    self.spriteAtlas:draw()
+end
+
+function Player:idleState()
+    print("I am in idle state")
+end
+
+function Player:exitIdleState()
+    print("I am exiting idle state")
+end
+
+function Player:jumpState()
+    print("I am in jump state")
+end
+
+function Player:enterJumpState()
+    print("I am entering jump state")
+end
+--#endregion
 
 local renderPipeline
 local shaderParams = { saturation = 1 }
@@ -122,7 +122,7 @@ function love.load()
     camera:addLayer('near', 2)
 
     local scene = shep.scene(game)
-    myPlayer = player.new(scene)
+    myPlayer = Player(scene)
 
     game:switchScene(scene.sceneIndex)
     scene:findEntity(myPlayer.uuid)
