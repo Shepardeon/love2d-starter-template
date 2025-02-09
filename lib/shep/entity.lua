@@ -1,31 +1,29 @@
-local entity = {}
 local lume = require('lib.lume')
 
+---@class shep.Entity: Object
+---@field uuid string
+---@field protected alive boolean
+local Entity = Object:extend()
+
 ---@param scene shep.Scene
----@param updateFn fun(self: shep.Entity, dt: number)|nil
----@param drawFn fun(self: shep.Entity)|nil
----@return shep.Entity
-function entity.new(scene, updateFn, drawFn)
-    --- @class shep.Entity
-    local self = {}
+function Entity:new(scene)
     self.uuid = lume.uuid()
     self.alive = true
 
-    self.update = updateFn or function(dt)
-        -- do nothing
-    end
-
-    self.draw = drawFn or function()
-        -- do nothing
-    end
-
-    function self:isAlive()
-        return self.alive
-    end
-
     scene:addEntity(self)
-
-    return self
 end
 
-return entity
+function Entity:isAlive()
+    return self.alive
+end
+
+---@param dt number
+function Entity:update(dt)
+    -- do nothing
+end
+
+function Entity:draw()
+    -- do nothing
+end
+
+return Entity

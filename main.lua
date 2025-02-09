@@ -109,7 +109,7 @@ function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     love.graphics.setBackgroundColor(0.1, 0.1, 0.1)
 
-    game = shep.game.new()
+    game = shep.game()
     renderer = shep.renderer.new(game.window.width, game.window.height, gameScale,
     {
         center = true,
@@ -121,7 +121,7 @@ function love.load()
     camera:addLayer('far', 0.5)
     camera:addLayer('near', 2)
 
-    local scene = shep.scene.new(game)
+    local scene = shep.scene(game)
     myPlayer = player.new(scene)
 
     game:switchScene(scene.sceneIndex)

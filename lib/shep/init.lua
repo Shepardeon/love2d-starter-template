@@ -1,5 +1,9 @@
 local shep = { _version = "1.0.0" }
 
+-- Global scope
+Object = require("lib.classic")
+-- Load all the modules
+
 shep.animator = require('lib.shep.animator')
 shep.atlas = require("lib.shep.atlas")
 shep.camera = require("lib.shep.camera")
