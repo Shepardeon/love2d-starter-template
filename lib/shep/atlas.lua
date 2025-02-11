@@ -26,6 +26,7 @@ local defaultOptions = {
 ---@field private quadsInBatch table<number, string>
 local Atlas = Object:extend()
 
+--- Initializes a new Atlas.
 ---@param image string|love.Image
 ---@param options shep.AtlasOptions|nil
 function Atlas:new(image, options)
@@ -47,7 +48,7 @@ function Atlas:new(image, options)
     self.spriteBatch = love.graphics.newSpriteBatch(self.image, self.options.batchLimit)
 end
 
---- Registers a quad in the atlas
+--- Registers a quad in the atlas.
 ---@param name string -- The name of the quad
 ---@param posX number -- The row position (will be multiplied internally by the tileWidth)
 ---@param posY number -- The column position (will be multiplied internally by the tileHeight)
@@ -71,9 +72,8 @@ function Atlas:addQuad(name, posX, posY, mulW, mulH)
     )
 end
 
---- Registers a quad in the atlas without any calculations
---- 
---- Useful for when you have a sprite sheet with different sized sprites
+--- Registers a quad in the atlas without any calculations.
+--- Useful for when you have a sprite sheet with different sized sprites.
 ---@param name string -- The name of the quad
 ---@param x number -- The row position
 ---@param y number -- The column position
@@ -94,7 +94,7 @@ function Atlas:addQuadRaw(name, x, y, w, h)
     )
 end
 
---- Draws only a quad from the atlas
+--- Draws only a quad from the atlas.
 ---@param name string
 ---@param x number
 ---@param y number
@@ -113,17 +113,18 @@ function Atlas:drawQuad(name, x, y, r, sx, sy, ox, oy, kx, ky)
     love.graphics.draw(self.image, self.quads[name], x, y, r, sx, sy, ox, oy, kx, ky)
 end
 
-    ---@param name string
-    ---@param x number
-    ---@param y number
-    ---@param r number|nil
-    ---@param sx number|nil
-    ---@param sy number|nil
-    ---@param ox number|nil
-    ---@param oy number|nil
-    ---@param kx number|nil
-    ---@param ky number|nil
-    ---@return number -- The index of the quad in the sprite batch
+--- Adds a quad to the sprite batch.
+---@param name string
+---@param x number
+---@param y number
+---@param r number|nil
+---@param sx number|nil
+---@param sy number|nil
+---@param ox number|nil
+---@param oy number|nil
+---@param kx number|nil
+---@param ky number|nil
+---@return number -- The index of the quad in the sprite batch
 function Atlas:addToBatch(name, x, y, r, sx, sy, ox, oy, kx, ky)
     if not self.quads[name] then
         error("Quad with name '" .. name .. "' does not exist", 2)
@@ -135,6 +136,7 @@ function Atlas:addToBatch(name, x, y, r, sx, sy, ox, oy, kx, ky)
     return idx
 end
 
+--- Updates a quad in the sprite batch.
 ---@param idx number -- The index of the quad in the sprite batch
 ---@param name string
 ---@param x number
@@ -160,6 +162,7 @@ function Atlas:updateBatch(idx, name, x, y, r, sx, sy, ox, oy, kx, ky)
 
 end
 
+--- Removes a quad from the sprite batch.
 ---@param idx number -- The index of the quad in the sprite batch
 function Atlas:removeFromBatch(idx)
     if not self.quadsInBatch[idx] then
@@ -172,11 +175,12 @@ function Atlas:removeFromBatch(idx)
     self.spriteBatch:set(idx, 0, 0, 0, 0, 0)
 end
 
+--- Clears the sprite batch.
 function Atlas:clearBatch()
     self.spriteBatch:clear()
 end
 
---- Draws the content of the sprite batch
+--- Draws the content of the sprite batch.
 function Atlas:draw()
     love.graphics.draw(self.spriteBatch)
 end

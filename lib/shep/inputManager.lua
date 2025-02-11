@@ -24,6 +24,7 @@ InputManager.all_keys = {
     "dpdown", "dpleft", "dpright", "leftx", "lefty", "rightx", "righty",
 }
 
+--- Creates a new InputManager instance.
 function InputManager:new()
     self.state = {}
     self.prevState = {}
@@ -46,7 +47,7 @@ function InputManager:new()
     end
 end
 
---- Binds a key to an action
+--- Binds a key to an action.
 ---@param key string
 ---@param action function|string
 function InputManager:bind(key, action)
@@ -62,7 +63,7 @@ function InputManager:bind(key, action)
     table.insert(self.binds[action], key)
 end
 
---- Returns true when action was just pressed
+--- Returns true when action was just pressed.
 ---@param action string|nil
 function InputManager:pressed(action)
     if action then
@@ -82,7 +83,7 @@ function InputManager:pressed(action)
     end
 end
 
---- Returns true when action was just released
+--- Returns true when action was just released.
 ---@param action string
 function InputManager:released(action)
     for _, key in ipairs(self.binds[action]) do
@@ -92,7 +93,7 @@ function InputManager:released(action)
     end
 end
 
---- Checks for a sequence of inputs to start an actions
+--- Checks for a sequence of inputs to start an action.
 ---@param ... string
 function InputManager:sequence(...)
     local sequence = {...}
@@ -157,7 +158,7 @@ local function isKeyboardKey(key)
     return not (keyToButton[key] or gamepadToButton[key] or axisToButton[key])
 end
 
---- Returns true when action is being held down with optional interval and delay
+--- Returns true when action is being held down with optional interval and delay.
 ---@param action string
 ---@param interval number
 ---@param delay number
@@ -201,7 +202,7 @@ function InputManager:down(action, interval, delay)
     return false
 end
 
---- Unbinds a key from an action
+--- Unbinds a key from an action.
 ---@param key string
 function InputManager:unbind(key)
     for action, keys in pairs(self.binds) do
@@ -217,13 +218,13 @@ function InputManager:unbind(key)
     end
 end
 
---- Unbinds all keys from all actions
+--- Unbinds all keys from all actions.
 function InputManager:unbindAll()
     self.binds = {}
     self.functions = {}
 end
 
---- Returns the next input that was pressed
+--- Returns the next input that was pressed.
 --- @return string|nil
 function InputManager:getNextInputPressed()
     for _, key in ipairs(InputManager.all_keys) do
@@ -235,6 +236,7 @@ function InputManager:getNextInputPressed()
     return nil
 end
 
+--- Updates the input manager.
 function InputManager:update()
     self:pressed()
     self.prevState = lume.clone(self.state)

@@ -14,7 +14,7 @@ local maxDataPoints = 100
 local avgUpdateTime = 0
 local avgDrawTime = 0
 
--- Function to replace love.run
+--- Function to replace love.run.
 function debug.run()
     if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
 
@@ -78,6 +78,7 @@ function debug.run()
 	end
 end
 
+--- Updates the debug data.
 function debug.update()
     if (#dataPoints >= maxDataPoints) then
         utils.shiftTable(dataPoints)
@@ -87,6 +88,7 @@ function debug.update()
     avgDrawTime = utils.avgTable(lume.map(dataPoints, function(v) return v.drawTime end))
 end
 
+--- Draws the debug information.
 ---@param x number|nil
 ---@param y number|nil
 function debug.draw(x, y, barScale, barWidth)

@@ -4,10 +4,12 @@ local lume = require('lib.lume')
 ---@field private events table<string, table<function>>
 local EventManager = Object:extend()
 
+--- Creates a new EventManager instance.
 function EventManager:new()
     self.events = {}
 end
 
+--- Adds a new event.
 ---@param eventName string
 function EventManager:addEvent(eventName)
     if (self.events[eventName] ~= nil) then
@@ -17,11 +19,13 @@ function EventManager:addEvent(eventName)
     self.events[eventName] = {}
 end
 
+--- Removes an event.
 ---@param eventName string
 function EventManager:removeEvent(eventName)
     self.events[eventName] = nil
 end
 
+--- Hooks a callback to an event.
 ---@param eventName string
 ---@param callback function
 ---@param shouldReplace boolean|nil
@@ -43,6 +47,7 @@ function EventManager:hook(eventName, callback, shouldReplace)
     end
 end
 
+--- Unhooks a callback from an event.
 ---@param eventName string
 ---@param callback function
 function EventManager:unhook(eventName, callback)
@@ -53,7 +58,7 @@ function EventManager:unhook(eventName, callback)
     lume.remove(self.events[eventName], callback)
 end
 
---- Clears all events hooks or a specific event if given a name
+--- Clears all events hooks or a specific event if given a name.
 ---@param eventName string|nil
 function EventManager:clear(eventName)
     if eventName == nil then
@@ -63,6 +68,7 @@ function EventManager:clear(eventName)
     end
 end
 
+--- Fires an event.
 ---@param eventName string
 ---@param ... any
 function EventManager:fire(eventName, ...)

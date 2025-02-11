@@ -72,6 +72,7 @@ local defaultLayerOptions = {
     mode = 'transform'
 }
 
+--- Creates a new Camera instance.
 ---@param width number
 ---@param height number
 ---@param options shep.CameraOptions|nil
@@ -131,6 +132,7 @@ function Camera:sumShakes(shakes)
     return shakeAmount
 end
 
+--- Updates the camera.
 function Camera:update()
     local xShakeAmount, yShakeAmount = self:sumShakes(self.shakes.x), self:sumShakes(self.shakes.y)
     local xViewportShakeAmount, yViewportShakeAmount = self:sumShakes(self.viewportShakes.x), self:sumShakes(self.viewportShakes.y)
@@ -139,6 +141,7 @@ function Camera:update()
     self:moveViewport(xViewportShakeAmount, yViewportShakeAmount)
 end
 
+--- Shakes the camera.
 ---@param amplitude number
 ---@param frequency number
 ---@param duration number
@@ -147,6 +150,7 @@ function Camera:shake(amplitude, frequency, duration)
     self:shakeY(amplitude, frequency, duration)
 end
 
+--- Shakes the camera on the X axis.
 ---@param amplitude number
 ---@param frequency number
 ---@param duration number
@@ -154,6 +158,7 @@ function Camera:shakeX(amplitude, frequency, duration)
     table.insert(self.shakes.x, Camera.Shake(amplitude, frequency, duration))
 end
 
+--- Shakes the camera on the Y axis.
 ---@param amplitude number
 ---@param frequency number
 ---@param duration number
@@ -161,6 +166,7 @@ function Camera:shakeY(amplitude, frequency, duration)
     table.insert(self.shakes.y, Camera.Shake(amplitude, frequency, duration))
 end
 
+--- Shakes the camera viewport.
 ---@param amplitude number
 ---@param frequency number
 ---@param duration number
@@ -169,6 +175,7 @@ function Camera:shakeViewport(amplitude, frequency, duration)
     self:shakeViewportY(amplitude, frequency, duration)
 end
 
+--- Shakes the camera viewport on the X axis.
 ---@param amplitude number
 ---@param frequency number
 ---@param duration number
@@ -176,6 +183,7 @@ function Camera:shakeViewportX(amplitude, frequency, duration)
     table.insert(self.viewportShakes.x, Camera.Shake(amplitude, frequency, duration))
 end
 
+--- Shakes the camera viewport on the Y axis.
 ---@param amplitude number
 ---@param frequency number
 ---@param duration number
@@ -183,6 +191,7 @@ function Camera:shakeViewportY(amplitude, frequency, duration)
     table.insert(self.viewportShakes.y, Camera.Shake(amplitude, frequency, duration))
 end
 
+--- Resizes the camera.
 ---@param containerW number
 ---@param containerH number
 function Camera:resize(containerW, containerH)
@@ -205,13 +214,17 @@ function Camera:resize(containerW, containerH)
     end
 end
 
+--- Gets the container dimensions.
+---@return number, number
 function Camera:getContainerDimensions()
     return love.graphics.getDimensions()
 end
 
+--- Adds a layer to the camera.
 ---@param name string
 ---@param scale number
 ---@param layerOptions shep.CameraLayerOptions|nil
+---@return shep.CameraLayer
 function Camera:addLayer(name, scale, layerOptions)
     --- @class shep.CameraLayer
     local layer = {}
@@ -236,6 +249,7 @@ function Camera:addLayer(name, scale, layerOptions)
     return layer
 end
 
+--- Gets a layer from the camera.
 ---@param name string
 ---@return shep.CameraLayer
 function Camera:getLayer(name)
@@ -246,19 +260,23 @@ function Camera:getLayer(name)
     return self.layers[name]
 end
 
+--- Pushes the camera state.
 ---@param layer string|nil
 function Camera:push(layer)
     self:getLayer(layer or "main"):push()
 end
 
+--- Pops the camera state.
 ---@param layer string|nil
 function Camera:pop(layer)
     self:getLayer(layer or "main"):pop()
 end
 
+--- Gets the world coordinates from screen coordinates.
 ---@param x number
 ---@param y number
 ---@param layer string|nil
+---@return number, number
 function Camera:getWorldCoordinates(x, y, layer)
     local currentLayer = self:getLayer(layer or "main")
     local scaleFactor = self.scale * self.aspectRatioScale * currentLayer.scale
@@ -268,9 +286,11 @@ function Camera:getWorldCoordinates(x, y, layer)
     return x + self.translationX * currentLayer.speedToScaleRatio, y + self.translationY * currentLayer.speedToScaleRatio
 end
 
+--- Gets the screen coordinates from world coordinates.
 ---@param x number
 ---@param y number
 ---@param layer string|nil
+---@return number, number
 function Camera:getScreenCoordinates(x, y, layer)
     local currentLayer = self:getLayer(layer or "main")
     local scaleFactor = self.scale * self.aspectRatioScale * currentLayer.scale
@@ -280,24 +300,29 @@ function Camera:getScreenCoordinates(x, y, layer)
     return x + self.x + self.offsetX, y + self.y + self.offsetY
 end
 
+--- Gets the mouse world coordinates.
 ---@param layer string|nil
+---@return number, number
 function Camera:getMouseWorldCoordinates(layer)
     local x, y = love.mouse.getPosition()
     return self:getWorldCoordinates(x, y, layer)
 end
 
+--- Moves the camera.
 ---@param dx number
 ---@param dy number
 function Camera:move(dx, dy)
     self.translationX, self.translationY = self.translationX + dx, self.translationY + dy
 end
 
+--- Moves the camera viewport.
 ---@param dx number
 ---@param dy number
 function Camera:moveViewport(dx, dy)
     self.x, self.y = self.x + dx, self.y + dy
 end
 
+--- Follows a target on the X axis.
 ---@param dt number
 ---@param x number
 ---@param smoothingFunction function|nil -- Defaults to none
@@ -307,6 +332,7 @@ function Camera:followX(dt, x, smoothingFunction, ...)
     self.translationX = self.translationX + dx
 end
 
+--- Follows a target on the Y axis.
 ---@param dt number
 ---@param y number
 ---@param smoothingFunction function|nil -- Defaults to none
@@ -316,6 +342,7 @@ function Camera:followY(dt, y, smoothingFunction, ...)
     self.translationY = self.translationY + dy
 end
 
+--- Follows a target.
 ---@param dt number
 ---@param x number
 ---@param y number
@@ -325,7 +352,7 @@ function Camera:follow(dt, x, y, smoothingFunction, ...)
     self:move((smoothingFunction or self.smoothingFunction)(dt, x - self.translationX, y - self.translationY, ...))
 end
 
---- Locks the camera as long as the x and y values are within the min and max values
+--- Locks the camera as long as the x and y values are within the min and max values.
 ---@param dt number
 ---@param x number
 ---@param y number
@@ -349,7 +376,7 @@ function Camera:followLockScreenInside(dt, x, y, minX, minY, maxX, maxY, smoothi
     self:move((smoothingFunction or self.smoothingFunction)(dt, dx, dy, ...))
 end
 
---- Locks the camera when the x and y values are outside the min and max values
+--- Locks the camera when the x and y values are outside the min and max values.
 ---@param dt number
 ---@param x number
 ---@param y number
@@ -373,6 +400,7 @@ function Camera:followLockScreenOutside(dt, x, y, minX, minY, maxX, maxY, smooth
     self:move((smoothingFunction or self.smoothingFunction)(dt, dx, dy, ...))
 end
 
+--- Increases the camera scale to a point.
 ---@param ds number
 ---@param wx number|nil
 ---@param wy number|nil
@@ -386,6 +414,7 @@ function Camera:increaseScaleToPoint(ds, wx, wy)
     self:increaseTranslation((wx - tx) * ds / self.scale, (wy - ty) * ds / self.scale)
 end
 
+--- Scales the camera to a point.
 ---@param ds number
 ---@param wx number|nil
 ---@param wy number|nil
@@ -399,22 +428,26 @@ function Camera:scaleToPoint(ds, wx, wy)
     self:increaseTranslation((wx - tx) * (1 - 1 / ds), (wy - ty) * (1 - 1 / ds))
 end
 
+--- Increases the camera translation.
 ---@param dx number
 ---@param dy number
 function Camera:increaseTranslation(dx, dy)
     self.translationX, self.translationY = self.translationX + dx, self.translationY + dy
 end
 
+--- Increases the camera rotation.
 ---@param dr number
 function Camera:increaseRotation(dr)
     self.rotation = self.rotation + dr
 end
 
+--- Increases the camera scale.
 ---@param ds number
 function Camera:increaseScale(ds)
     self.scale = self.scale + ds
 end
 
+--- Scales the camera by a factor.
 ---@param ds number
 function Camera:scaleBy(ds)
     self.scale = self.scale * ds

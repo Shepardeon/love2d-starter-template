@@ -17,20 +17,23 @@ end
 --- @field currentState function|nil
 local StateMachine = Object:extend()
 
+--- Initializes a new StateMachine instance.
 function StateMachine:new()
     self.states = {}
     self.currentState = nil
 end
 
----@param subject any
----@param normalState function
----@param enterState function|nil
----@param exitState function|nil
+--- Adds a new state to the state machine.
+--- @param subject any The subject associated with the state.
+--- @param normalState function The function representing the normal state.
+--- @param enterState function|nil The function to call when entering the state.
+--- @param exitState function|nil The function to call when exiting the state.
 function StateMachine:addState(subject, normalState, enterState, exitState)
     self.states[normalState] = StateFlow(subject, normalState, enterState, exitState)
 end
 
----@param toState function
+--- Changes the current state to the specified state.
+--- @param toState function The function representing the state to change to.
 function StateMachine:changeState(toState)
     local stateFlows = self.states[toState]
 
@@ -39,7 +42,8 @@ function StateMachine:changeState(toState)
     end
 end
 
----@param initialState function
+--- Sets the initial state of the state machine.
+--- @param initialState function The function representing the initial state.
 function StateMachine:setInitialState(initialState)
     local stateFlows = self.states[initialState]
 
@@ -48,14 +52,17 @@ function StateMachine:setInitialState(initialState)
     end
 end
 
+--- Updates the current state.
+--- @param dt number The delta time since the last update.
 function StateMachine:update(dt)
     if self.currentState then
         self.currentState(self.states[self.currentState].subject, dt)
     end
 end
 
----@private
----@param stateFlows shep.StateFlow
+--- Sets the current state to the specified state flow.
+--- @private
+--- @param stateFlows shep.StateFlow The state flow to set as the current state.
 function StateMachine:setState(stateFlows)
     if self.currentState then
         ---@type shep.StateFlow

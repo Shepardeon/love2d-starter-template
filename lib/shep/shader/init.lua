@@ -5,6 +5,7 @@
 local Shader = Object:extend()
 Shader.Effects = require('lib.shep.Shader.effects')
 
+--- Initializes a new ShaderPipeline.
 ---@param effect shep.Effect|fun():shep.Effect
 ---@param width number|nil
 ---@param height number|nil
@@ -21,11 +22,13 @@ function Shader:new(effect, width, height)
     return self:next(effect)
 end
 
+--- Swaps the front and back buffers.
 function Shader:buffer()
     self.back, self.front = self.front, self.back
     return self.front, self.back
 end
 
+--- Resizes the shader buffers.
 ---@param w number
 ---@param h number
 function Shader:resize(w, h)
@@ -33,6 +36,7 @@ function Shader:resize(w, h)
     return self
 end
 
+--- Adds a new effect to the pipeline.
 ---@param mEffect shep.Effect|fun():shep.Effect
 function Shader:next(mEffect)
     if type(mEffect) == 'function' then
@@ -43,6 +47,7 @@ function Shader:next(mEffect)
     return self
 end
 
+--- Pushes the current drawing state and sets up for drawing to the shader.
 function Shader:push()
     -- save states
     self.state.canvas = love.graphics.getCanvas()
@@ -56,6 +61,7 @@ function Shader:push()
     -- User draws here before calling :pop()
 end
 
+--- Pops the drawing state and applies the shader effects.
 function Shader:pop()
     -- User has drawn to the back buffer here
 
@@ -81,6 +87,7 @@ function Shader:pop()
     love.graphics.setShader(self.state.Shader)
 end
 
+--- Disables one or more effects by name.
 ---@param name string -- Name of the effect to disable
 ---@param ... string -- Additional names to disable
 ---@return shep.ShaderPipeline
@@ -93,6 +100,7 @@ function Shader:disable(name, ...)
     return self
 end
 
+--- Enables one or more effects by name.
 ---@param name string -- Name of the effect to enable
 ---@param ... string -- Additional names to enable
 ---@return shep.ShaderPipeline
@@ -105,6 +113,7 @@ function Shader:enable(name, ...)
     return self
 end
 
+--- Sends a parameter value to a specific effect.
 ---@param effectName string -- Name of the effect
 ---@param param string -- Name of the parameter to set
 ---@param value any -- Value to set the parameter to
@@ -119,6 +128,7 @@ function Shader:send(effectName, param, value)
     return self
 end
 
+--- Draws the shader effect.
 ---@param pipeline shep.ShaderPipeline
 ---@param buffer fun(pipeline: shep.ShaderPipeline): love.Canvas, love.Canvas
 ---@param ShaderObj love.Shader

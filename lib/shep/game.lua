@@ -23,6 +23,7 @@ local defaultWindowOptions = {
     scaleY = 1
 }
 
+--- Creates a new Game instance.
 ---@param windowOptions shep.GameWindow|nil
 function Game:new(windowOptions)
     self.scenes = {}
@@ -37,6 +38,7 @@ function Game:new(windowOptions)
     self.events:addEvent('gameResized')
 end
 
+--- Adds a new scene to the game.
 ---@param scene shep.Scene
 ---@return number # Scene index
 function Game:addScene(scene)
@@ -44,6 +46,7 @@ function Game:addScene(scene)
     return #self.scenes
 end
 
+--- Switches to a different scene by index.
 ---@param index integer
 function Game:switchScene(index)
     local scene = self.scenes[index]
@@ -59,6 +62,7 @@ function Game:switchScene(index)
     self.currentScene:enable()
 end
 
+--- Resizes the game window.
 ---@param scale number
 function Game:resizeGameWindow(scale)
     love.window.setMode(self.window.width * scale, self.window.height * scale, { resizable = true })
@@ -68,17 +72,20 @@ function Game:resizeGameWindow(scale)
     self.events:fire('gameResized', self.window.width, self.window.height, scale)
 end
 
+--- Gets the game window size.
 ---@return number
 ---@return number
 function Game:getGameWindowSize()
     return self.window.width, self.window.height
 end
 
+--- Sets the time scale for the game.
 ---@param timeScale number
 function Game:setTimeScale(timeScale)
     self.timeScale = timeScale
 end
 
+--- Sets the time scale for a duration.
 ---@param timeScale number
 ---@param duration number
 function Game:setTimeScaleFor(timeScale, duration)
@@ -86,6 +93,7 @@ function Game:setTimeScaleFor(timeScale, duration)
     self.globalTimer:tween('timeScale', duration, self, {timeScale = 1}, 'in-out-cubic')
 end
 
+--- Updates the game.
 ---@param dt number
 function Game:update(dt)
     self.currentScene:update(dt * self.timeScale)
@@ -93,6 +101,7 @@ function Game:update(dt)
     self.globalTimer:update(dt)
 end
 
+--- Draws the current scene.
 function Game:draw()
     self.currentScene:draw()
 end

@@ -9,6 +9,7 @@ local utils = require("lib.shep.utils")
 ---@field private batchIndex number|nil
 local Animator = Object:extend()
 
+--- Initializes a new Animator.
 ---@param atlasOptions shep.AtlasOptions|nil
 ---@param image string|love.Image|nil
 ---@param sharedAtlas shep.Atlas|nil
@@ -24,6 +25,7 @@ function Animator:new(sharedAtlas, image, atlasOptions)
     self.batchIndex = nil
 end
 
+--- Gets frames for an animation.
 ---@param name string
 ---@param ... number|number[]
 ---@return string[]
@@ -60,6 +62,7 @@ function Animator:getFrames(name, ...)
     return finalFrames
 end
 
+--- Adds a new animation.
 ---@param name string
 ---@param frames string[]
 ---@param durations number|number[]
@@ -106,6 +109,7 @@ function Animator:addAnimation(name, frames, durations, onLoop)
     }
 end
 
+--- Sets the current animation.
 ---@param name string
 function Animator:setAnimation(name)
     if not self.animations[name] then
@@ -119,6 +123,7 @@ function Animator:setAnimation(name)
     self.currentAnimation.paused = false
 end
 
+--- Updates the current animation.
 ---@param dt number
 function Animator:update(dt)
     if self.currentAnimation and not self.currentAnimation.paused then
@@ -141,6 +146,7 @@ function Animator:update(dt)
     end
 end
 
+--- Draws the current animation.
 ---@param x number
 ---@param y number
 ---@param r number|nil

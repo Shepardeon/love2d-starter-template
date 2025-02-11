@@ -135,6 +135,7 @@ else
     loader.thread = nil
     loader.resourceBeingLoaded = nil
 
+    --- Adds a new resource to be loaded.
     ---@private
     ---@param kind string
     ---@param holder table
@@ -154,6 +155,7 @@ else
         }
     end
 
+    --- Gets the available resource from the thread.
     ---@private
     function loader:getAvailableResourceFromThread()
         local data, resource
@@ -170,6 +172,7 @@ else
         end
     end
 
+    --- Requests a resource to be loaded by the thread.
     ---@private
     function loader:requestResourceToThread()
         self.resourceBeingLoaded = utils.popTable(self.pending)
@@ -178,6 +181,7 @@ else
         channel:push(self.resourceBeingLoaded.requestParams)
     end
 
+    --- Ends the thread if all resources are loaded.
     ---@private
     function loader:endThreadIfAllLoader()
         if not self.resourceBeingLoaded and #self.pending == 0 then
@@ -186,6 +190,7 @@ else
         end
     end
 
+    --- Adds a new image resource.
     ---@param holder table
     ---@param key string
     ---@param path string
@@ -193,6 +198,7 @@ else
         self:newResource('image', holder, key, path)
     end
 
+    --- Adds a new audio source resource.
     ---@param holder table
     ---@param key string
     ---@param path string
@@ -202,6 +208,7 @@ else
         self:newResource(kind, holder, key, path)
     end
 
+    --- Adds a new font resource.
     ---@param holder table
     ---@param key string
     ---@param path string
@@ -210,6 +217,7 @@ else
         self:newResource('font', holder, key, path, size)
     end
 
+    --- Adds a new BMFont resource.
     ---@param holder table
     ---@param key string
     ---@param path string
@@ -218,6 +226,7 @@ else
         self:newResource('BMFont', holder, key, path, glyphsPath)
     end
 
+    --- Adds a new sound data resource.
     ---@param holder table
     ---@param key string
     ---@param pathOrDecoder string
@@ -225,6 +234,7 @@ else
         self:newResource('soundData', holder, key, pathOrDecoder)
     end
 
+    --- Adds a new image data resource.
     ---@param holder table
     ---@param key string
     ---@param path string
@@ -232,14 +242,23 @@ else
         self:newResource('imageData', holder, key, path)
     end
 
+    --- Adds a new compressed data resource.
+    ---@param holder table
+    ---@param key string
+    ---@param path string
     function loader:newCompressedData(holder, key, path)
         self:newResource('compressedData', holder, key, path)
     end
 
+    --- Adds a new raw data resource.
+    ---@param holder table
+    ---@param key string
+    ---@param path string
     function loader:newRawData(holder, key, path)
         self:newResource('textData', holder, key, path)
     end
 
+    --- Starts the loader thread.
     ---@param oneLoadedCb fun(kind: string, holder: table, key: string)|nil
     ---@param allLoadedCb fun()|nil
     function loader:start(oneLoadedCb, allLoadedCb)
@@ -255,6 +274,7 @@ else
         self.thread:start(true)
     end
 
+    --- Updates the loader.
     function loader:update()
         if self.thread then
             if self.thread:isRunning() then

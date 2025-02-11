@@ -1,6 +1,7 @@
 --- @class shep.Effect
 local Effect = Object:extend()
 
+--- Initializes a new Effect.
 ---@param name string -- Name of the effect
 ---@param shader love.Shader|nil -- Love's compiled shader object
 ---@param setters table<string, fun(val: any)>|nil -- Table of functions to set the shader's data
@@ -14,6 +15,7 @@ function Effect:new(name, shader, setters, defaults, draw)
     self.draw = draw
 end
 
+--- Builds the effect by setting default values.
 ---@return shep.Effect
 function Effect:build()
     for param, value in pairs(self.defaults) do

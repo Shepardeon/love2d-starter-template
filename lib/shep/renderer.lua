@@ -14,6 +14,7 @@ local emptyDraw = function() end
 ---@field private renderPasses table<number, shep.RenderPass>
 local Renderer = Object:extend()
 
+--- Creates a new Renderer instance.
 ---@param gameWidth number
 ---@param gameHeight number
 ---@param renderScale number
@@ -37,6 +38,7 @@ function Renderer:new(gameWidth, gameHeight, renderScale, cameraOptions)
     }
 end
 
+--- Adds a new render pass.
 ---@param name string
 ---@param order number
 ---@param effect shep.Effect|fun():shep.Effect
@@ -58,6 +60,7 @@ function Renderer:addRenderPass(name, order, effect, draw)
     }
 end
 
+--- Gets a render pass by name.
 ---@param name string
 ---@return shep.RenderPass
 function Renderer:getRenderPass(name)
@@ -68,6 +71,7 @@ function Renderer:getRenderPass(name)
     return self.renderPasses[self.renderIndex[name]]
 end
 
+--- Gets a render pipeline by name.
 ---@param name string
 ---@return shep.ShaderPipeline
 function Renderer:getRenderPipeline(name)
@@ -78,6 +82,7 @@ function Renderer:getRenderPipeline(name)
     return self.renderPasses[self.renderIndex[name]].pipeline
 end
 
+--- Sets the draw function for a render pass.
 ---@param name string
 ---@param draw fun()
 function Renderer:setDrawFunction(name, draw)
@@ -88,6 +93,7 @@ function Renderer:setDrawFunction(name, draw)
     self.renderPasses[self.renderIndex[name]].draw = draw
 end
 
+--- Resizes the renderer.
 ---@param newGameWidth number
 ---@param newGameHeight number
 ---@param newRenderScale number
@@ -105,6 +111,7 @@ function Renderer:resize(newGameWidth, newGameHeight, newRenderScale)
     end
 end
 
+--- Draws the render passes.
 function Renderer:draw()
     local bg_r, bg_g, bg_b, bg_a = love.graphics.getBackgroundColor()
     love.graphics.setBackgroundColor(0, 0, 0, 0) -- Set background to transparent
@@ -138,11 +145,13 @@ function Renderer:draw()
     love.graphics.setBackgroundColor(bg_r, bg_g, bg_b, bg_a)
 end
 
+--- Gets the main camera.
 ---@return shep.Camera
 function Renderer:getCamera()
     return self.mainCamera
 end
 
+--- Gets the main canvas.
 ---@return love.Canvas
 function Renderer:getCanvas()
     return self.mainCanvas
