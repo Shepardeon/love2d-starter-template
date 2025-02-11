@@ -36,7 +36,7 @@ You must keep in mind that this project doesn't have the pretention to be "the b
 
 ## Planned features
 
-As of now, the library is about ~70-80% done before I'm contempt with it for a 1.0.0 release. On top of revisiting some existing modules to fix issues or add new features (ie. add memory details and graphics stats to the debug graph, state machines not able to be used with "self") I have the following features planned:
+As of now, the library is about ~70-80% done before I'm contempt with it for a 1.0.0 release. On top of revisiting some existing modules to fix issues or add new features (ie. add memory details and graphics stats to the debug graph) I have the following features planned:
 
 * An audio manager to put sounds in audio "categories" and manage their volume
 * A (simple) UI Library which can handle layout, buttons, label and 9Patch

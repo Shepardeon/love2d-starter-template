@@ -1,10 +1,12 @@
 --- @class shep.StateFlow
 local StateFlow = Object:extend()
 
+---@param subject any
 ---@param normalState function
 ---@param enterState function|nil
 ---@param exitState function|nil
-function StateFlow:new(normalState, enterState, exitState)
+function StateFlow:new(subject, normalState, enterState, exitState)
+    self.subject = subject
     self.normalState = normalState
     self.enterState = enterState
     self.exitState = exitState
@@ -20,11 +22,12 @@ function StateMachine:new()
     self.currentState = nil
 end
 
+---@param subject any
 ---@param normalState function
 ---@param enterState function|nil
 ---@param exitState function|nil
-function StateMachine:addState(normalState, enterState, exitState)
-    self.states[normalState] = StateFlow(normalState, enterState, exitState)
+function StateMachine:addState(subject, normalState, enterState, exitState)
+    self.states[normalState] = StateFlow(subject, normalState, enterState, exitState)
 end
 
 ---@param toState function
@@ -47,21 +50,26 @@ end
 
 function StateMachine:update(dt)
     if self.currentState then
-        self.currentState(dt)
+        self.currentState(self.states[self.currentState].subject, dt)
     end
 end
 
 ---@private
 ---@param stateFlows shep.StateFlow
 function StateMachine:setState(stateFlows)
-    if self.currentState and self.states[self.currentState].exitState then
-        self.states[self.currentState].exitState()
+    if self.currentState then
+        ---@type shep.StateFlow
+        local currentState = self.states[self.currentState]
+
+        if currentState.exitState then
+            currentState.exitState(currentState.subject)
+        end
     end
 
     self.currentState = stateFlows.normalState
 
     if stateFlows.enterState then
-        stateFlows.enterState()
+        stateFlows.enterState(stateFlows.subject)
     end
 end
 

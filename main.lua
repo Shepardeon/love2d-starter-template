@@ -52,8 +52,8 @@ function Player:new(scene)
     ---@type shep.StateMachine
     self.stateMachine = shep.StateMachine()
 
-    self.stateMachine:addState(self.idleState, nil, self.exitIdleState)
-    self.stateMachine:addState(self.jumpState, self.enterJumpState)
+    self.stateMachine:addState(self, self.idleState, nil, self.exitIdleState)
+    self.stateMachine:addState(self, self.jumpState, self.enterJumpState)
     self.stateMachine:changeState(self.idleState)
 end
 
@@ -86,6 +86,7 @@ end
 
 function Player:idleState()
     print("I am in idle state")
+    print("My UUID is", self.uuid)
 end
 
 function Player:exitIdleState()
