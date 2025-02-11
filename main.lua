@@ -11,6 +11,7 @@ local myPlayer
 
 local gameScale = 1
 
+-- Use shep's debug run function to get debug information
 love.run = shep.debug.run
 
 --#region Player
@@ -106,10 +107,12 @@ local renderPipeline
 local shaderParams = { saturation = 1 }
 local images = {}
 local finishedLoading = false
+
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     love.graphics.setBackgroundColor(0.1, 0.1, 0.1)
 
+    -- Initialize the game and renderer
     game = shep.Game()
     renderer = shep.Renderer(game.window.width, game.window.height, gameScale,
     {
@@ -118,24 +121,29 @@ function love.load()
         smoothingFunction = shep.Camera.smoothingFunctions.linear(75)
     })
 
+    -- Get the camera from the renderer
     camera = renderer:getCamera()
     camera:addLayer('far', 0.5)
     camera:addLayer('near', 2)
 
+    -- Create a new scene and add the player to it
     local scene = shep.Scene(game)
     myPlayer = Player(scene)
 
+    -- Switch to the new scene
     game:switchScene(scene.sceneIndex)
     scene:findEntity(myPlayer.uuid)
     local alive = myPlayer:isAlive()
 
     shep.utils.printAll("The entity is alive ?", alive)
 
+    -- Bind input actions
     game.input:bind('space', 'jump')
     game.input:bind('s', function()
         camera:shake(6, 60, 0.4)
     end)
 
+    -- Add and hook events
     game.events:addEvent('onJump')
     game.events:hook('onJump', function()
         shep.utils.printText('Player jumped!', "I called that from an event!")
@@ -145,8 +153,10 @@ function love.load()
         renderer:resize(w, h, scale)
     end)
 
+    -- Resize the game window
     game:resizeGameWindow(gameScale)
 
+    -- Set the draw function for the renderer
     renderer:setDrawFunction('_main', function()
         camera:push('far')
         game:draw()
@@ -161,10 +171,12 @@ function love.load()
         camera:pop('near')
     end)
 
+    -- Set up the render pipeline
     renderPipeline = renderer:getRenderPipeline('_main')
     renderPipeline:next(shep.Shader.Effects.desaturate)
     game.globalTimer:tween(8, shaderParams, { saturation = 0 }, 'in-out-cubic')
 
+    -- Add a render pass for the UI
     renderer:addRenderPass('ui', 2, shep.Shader.Effects.passthrough, function()
         love.graphics.print('FPS:' .. love.timer.getFPS() , 10, 10)
 
@@ -206,7 +218,6 @@ function love.resize(w, h)
     game:resizeGameWindow(newScale)
 end
 
---TODO: rework everything here in a rendering pipeline
 function love.draw()
     renderer:draw()
     shep.debug.draw(99, 0, 1, 1)
