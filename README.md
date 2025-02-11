@@ -1,5 +1,7 @@
 # Löve Starter Template
 
+Everybody needs love, this starter project provides plenty!
+
 ## Should you use this template?
 
 It depends. If you're just starting out with Lua and or Love2D, you might learn better by toying around without relying on libraries or starter projects like this one. However if you're a more experienced developer, you might enjoy the fact that a lot of boilerplate code has been handled for you. As such, you may want to use this starter project and or reuse some parts of it in order to build your own starter project.
@@ -26,7 +28,7 @@ You must keep in mind that this project doesn't have the pretention to be "the b
 * An atlas management system that can use spritebatch
 * An animation system which uses the atlas system
 * A camera system that can handle multiple layers with parallax
-* A sahder pipeline that can chain multiple shaders back to back
+* A shader pipeline that can chain multiple shaders back to back
 * A rendering pipeline that combines camera+shaders+resolution handling
 * A debug graph which can be used to monitor update time, draw time, memory usage and so on...
 * An async loading system which allows to load game resources (images, fonts, sounds and more) without blocking the main thread
