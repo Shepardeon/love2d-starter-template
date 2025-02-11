@@ -73,7 +73,7 @@ function Shader:pop()
     love.graphics.setBlendMode("alpha", "premultiplied")
     for _, eff in ipairs(self.effects) do
         if not self.disabled[eff.name] then
-            (eff.draw or Shader.draw)(self, self.buffer, eff.Shader)
+            (eff.draw or Shader.draw)(self, self.buffer, eff.shader)
         end
     end
 
