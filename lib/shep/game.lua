@@ -1,6 +1,6 @@
-local eventManager = require("lib.shep.eventManager")
-local inputManager = require("lib.shep.inputManager")
-local timer = require("lib.hump.timer")
+local EventManager = require("lib.shep.eventManager")
+local InputManager = require("lib.shep.inputManager")
+local Timer = require("lib.hump.timer")
 
 ---@class shep.Game: Object
 ---@field private scenes table<shep.Scene>
@@ -31,9 +31,9 @@ function Game:new(windowOptions)
     self.timeScale = 1
     self.window =  windowOptions or defaultWindowOptions
 
-    self.globalTimer = timer()
-    self.events = eventManager()
-    self.input = inputManager()
+    self.globalTimer = Timer()
+    self.events = EventManager()
+    self.input = InputManager()
 
     self.events:addEvent('gameResized')
 end
