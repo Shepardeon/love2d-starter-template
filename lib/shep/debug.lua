@@ -6,13 +6,31 @@ local lume = require("lib.lume")
 ---@class shep.Debug
 local debug = {}
 
-local targetFps = 60
-local frameTime = 1/targetFps * 1000
+debug.config = {
+    targetFps = 60,
+    maxDataPoints = 250,
 
-local dataPoints = {}
-local maxDataPoints = 100
-local avgUpdateTime = 0
-local avgDrawTime = 0
+    shadowColor = {0, 0, 0, 0.5},
+    shadowOffset = { x = 1, y = 1 },
+
+    drawGraph = false,
+    drawDebug = true,
+}
+
+debug.stats = {
+    avgUpdateTime = 0,
+    avgDrawTime = 0,
+
+    avgUpdateTimePercent = 0,
+    avgDrawTimepercent = 0,
+}
+
+---@type string[]
+debug.info = {}
+
+local frameTime = 1/debug.config.targetFps * 1000
+
+debug.dataPoints = {}
 
 --- Function to replace love.run.
 function debug.run()
@@ -73,59 +91,117 @@ function debug.run()
 
 		if love.timer then love.timer.sleep(0.001) end
 
-        table.insert(dataPoints, dataPoint)
-        debug.update()
+        table.insert(debug.dataPoints, dataPoint)
 	end
 end
 
 --- Updates the debug data.
 function debug.update()
-    if (#dataPoints >= maxDataPoints) then
-        utils.shiftTable(dataPoints)
+    if (#debug.dataPoints >= debug.config.maxDataPoints) then
+        utils.shiftTable(debug.dataPoints)
     end
 
-    avgUpdateTime = utils.avgTable(lume.map(dataPoints, function(v) return v.updateTime end))
-    avgDrawTime = utils.avgTable(lume.map(dataPoints, function(v) return v.drawTime end))
+    debug.stats.avgUpdateTime = utils.avgTable(lume.map(debug.dataPoints, function(v) return v.updateTime end))
+    debug.stats.avgDrawTime = utils.avgTable(lume.map(debug.dataPoints, function(v) return v.drawTime end))
+
+    debug.stats.avgUpdateTimePercent = debug.stats.avgUpdateTime / frameTime * 100
+    debug.stats.avgDrawTimePercent = debug.stats.avgDrawTime / frameTime * 100
+
+    local stats = love.graphics.getStats()
+    local ram = collectgarbage("count")
+    local ramUnit = "KB"
+    local vram = stats.texturememory / 1024
+    local vramUnit = "KB"
+
+    if ram > 1024 then
+        ram = ram / 1024
+        ramUnit = "MB"
+    end
+
+    if vram > 1024 then
+        vram = vram / 1024
+        vramUnit = "MB"
+    end
+
+    debug.info = {
+        "FPS: " .. love.timer.getFPS(),
+        "Draw Time: " .. lume.round(debug.stats.avgDrawTime, .001) .. "ms (" .. lume.round(debug.stats.avgDrawTimePercent, 0.1) .. "%)",
+        "Update Time: " .. lume.round(debug.stats.avgUpdateTime, .001) .. "ms (" .. lume.round(debug.stats.avgUpdateTimePercent, 0.1) .. "%)",
+        "RAM: " .. lume.round(ram, .01) .. ramUnit,
+        "VRAM: " .. lume.round(vram, .01) .. vramUnit,
+        "Draw calls: " .. stats.drawcalls,
+        "Images: " .. stats.images,
+        "Canvases: " .. stats.canvases,
+        "\tSwitches: " .. stats.canvasswitches,
+        "Shader Switches: " .. stats.shaderswitches,
+        "Fonts: " .. stats.fonts,
+    }
+end
+
+---@private
+---@param x number
+---@param y number
+---@param barScale number
+---@param barWidth number
+function debug.drawGraph(x, y, barScale, barWidth)
+    local barSize = 100 * barScale
+
+    for i, v in ipairs(debug.dataPoints) do
+        love.graphics.setColor(0, 0, 1, 1)
+        love.graphics.rectangle('fill',
+            x + (i * barWidth),
+            y + barSize,
+            barWidth,
+            -barSize
+        )
+
+        love.graphics.setColor(0, 1, 0, 1)
+        love.graphics.rectangle('fill',
+            x + (i * barWidth),
+            y + barSize,
+            barWidth,
+            -v.updateTime / frameTime * barSize
+        )
+
+        love.graphics.setColor(1, 0, 0, 1)
+        love.graphics.rectangle('fill',
+            x + (i * barWidth),
+            y - v.updateTime / frameTime * barSize + barSize,
+            barWidth,
+            -v.drawTime / frameTime * barSize
+        )
+
+        love.graphics.setColor(1, 1, 1, 1)
+    end
 end
 
 --- Draws the debug information.
 ---@param x number|nil
 ---@param y number|nil
+---@param barScale number|nil
+---@param barWidth number|nil
 function debug.draw(x, y, barScale, barWidth)
     x = x or 0
     y = y or 0
     barScale = barScale or 1
     barWidth = barWidth or 1
 
-    love.graphics.print(string.format("Update time: %.2f (%.2f percent of frame time)", avgUpdateTime, (avgUpdateTime/frameTime)*100), x,  y + 10)
-    love.graphics.print(string.format("Draw time: %.2f (%.2f percent of frame time)", avgDrawTime, (avgDrawTime/frameTime)*100), x,  y + 25)
+    if not debug.config.drawDebug then return end
 
-    for i, v in ipairs(dataPoints) do
-        love.graphics.setColor(0, 0, 1, 1)
-        love.graphics.rectangle('fill',
-            x + (i * barWidth),
-            y + 40 + 100 * barScale,
-            barWidth,
-            -100 * barScale
-        )
+    -- We must update the debug infos during the render frame
+    -- otherwise we won't get the correct frame data
+    debug.update()
 
-        love.graphics.setColor(0, 1, 0, 1)
-        love.graphics.rectangle('fill',
-            x + (i * barWidth),
-            y + 40 + 100 * barScale,
-            barWidth,
-            -v.updateTime / frameTime * 100 * barScale
-        )
-
-        love.graphics.setColor(1, 0, 0, 1)
-        love.graphics.rectangle('fill',
-            x + (i * barWidth),
-            y + 40 - v.updateTime / frameTime * 100 * barScale + 100 * barScale,
-            barWidth,
-            -v.drawTime / frameTime * 100 * barScale
-        )
-
+    for _, info in ipairs(debug.info) do
+        love.graphics.setColor(debug.config.shadowColor)
+        love.graphics.print(info, x + debug.config.shadowOffset.x, y + debug.config.shadowOffset.y)
         love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.print(info, x, y)
+        y = y + 15
+    end
+
+    if debug.config.drawGraph then
+        debug.drawGraph(x, y, barScale, barWidth)
     end
 end
 

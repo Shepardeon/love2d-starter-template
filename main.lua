@@ -142,6 +142,12 @@ function love.load()
     game.input:bind('s', function()
         camera:shake(6, 60, 0.4)
     end)
+    game.input:bind('f1', function()
+        shep.debug.config.drawDebug = not shep.debug.config.drawDebug
+    end)
+    game.input:bind('f2', function()
+        shep.debug.config.drawGraph = not shep.debug.config.drawGraph
+    end)
 
     -- Add and hook events
     game.events:addEvent('onJump')
@@ -178,13 +184,11 @@ function love.load()
 
     -- Add a render pass for the UI
     renderer:addRenderPass('ui', 2, shep.Shader.Effects.passthrough, function()
-        love.graphics.print('FPS:' .. love.timer.getFPS() , 10, 10)
-
         if not finishedLoading then
-            love.graphics.print('Loading...', 10, 25)
+            love.graphics.print('Loading...', 10, 350)
         else
-            love.graphics.print('Loaded!', 10, 25)
-            love.graphics.draw(images.testImage, 10, 50)
+            love.graphics.print('Loaded!', 10, 350)
+            love.graphics.draw(images.testImage, 10, 370)
         end
     end)
 
@@ -220,5 +224,5 @@ end
 
 function love.draw()
     renderer:draw()
-    shep.debug.draw(99, 0, 1, 1)
+    shep.debug.draw(0, 0, 1, 1)
 end
