@@ -12,6 +12,7 @@ You must keep in mind that this project doesn't have the pretention to be "the b
 
 * [Bump](https://github.com/kikito/bump.lua): A collision-detection library for axis-aligned rectangles.
 * [Classic](https://github.com/rxi/classic): A tiny class module for Lua (globally imported as Object when requiring shep).
+* [Json](https://github.com/rxi/json.lua): A lightweight JSON library for Lua.
 * [Lume](https://github.com/rxi/lume): A collection of functions geared towards game development. Also provides module hotswapping.
 * [Hump.timer](https://github.com/vrld/hump/blob/master/timer.lua): A simple interface to schedule the execution of functions.
 * [Shep](https://github.com/Shepardeon/love2d-starter-template/tree/main/lib/shep): A starter library which brings an opiniated game structure which can handle input, game states, scene, entities, cameras and more.

@@ -21,6 +21,9 @@
     "Sheepolution's"
   ],
   "cSpell.ignorePaths": ["lib/**", ".vscode"],
-  "Lua.diagnostics.globals": ["lldebugger"],
+  "Lua.diagnostics.globals": [
+    "lldebugger",
+    "json"
+  ],
   "editor.tabSize": 4
 }

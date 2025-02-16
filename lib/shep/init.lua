@@ -2,6 +2,7 @@ local shep = { _version = "1.0.0" }
 
 -- Global scope
 Object = require("lib.classic")
+json = require("lib.json")
 -- Load all the modules
 
 -- Modules
