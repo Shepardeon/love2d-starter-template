@@ -121,6 +121,8 @@ function love.load()
         smoothingFunction = shep.Camera.smoothingFunctions.linear(75)
     })
 
+    shep.localization:loadFromDirectory('assets/lang')
+
     -- Get the camera from the renderer
     camera = renderer:getCamera()
     camera:addLayer('far', 0.5)
@@ -147,6 +149,10 @@ function love.load()
     end)
     game.input:bind('f2', function()
         shep.debug.config.drawGraph = not shep.debug.config.drawGraph
+    end)
+    game.input:bind('f3', function ()
+        local locale = shep.localization.currentLocale == 'en' and 'fr' or 'en'
+        shep.localization:setLocale(locale)
     end)
 
     -- Add and hook events
@@ -190,6 +196,13 @@ function love.load()
             love.graphics.print('Loaded!', 10, 350)
             love.graphics.draw(images.testImage, 10, 370)
         end
+
+        love.graphics.print('curren locale: ' .. shep.localization.currentLocale, 110, 390)
+        love.graphics.print('localization test: ' .. shep.localization:t('testFallback'), 110, 410)
+        love.graphics.print('localization hello: ' .. shep.localization:t('hello'), 110, 430)
+        love.graphics.print('localization world: ' .. shep.localization:t('world'), 110, 450)
+        love.graphics.print('localization welcome: ' .. shep.localization:t('welcome'), 110, 470)
+        love.graphics.print('localization goodbye: ' .. shep.localization:t('goodbye'), 110, 490)
     end)
 
     -- Test loading an image
@@ -224,5 +237,8 @@ end
 
 function love.draw()
     renderer:draw()
+    if not shep.debug.config.drawDebug then
+        love.graphics.print('Press F1 to toggle debug', 10, 10)
+    end
     shep.debug.draw(0, 0, 1, 1)
 end

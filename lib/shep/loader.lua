@@ -125,15 +125,16 @@ else
     ---@field private callbacks { oneLoaded: fun(kind: string, holder: table, key: string), allLoaded: fun() }
     ---@field private loadedCount number
     ---@field private resourceCount number
-    ---@field private thread love.Thread
-    ---@field private resourceBeingLoaded shep.ResourceRequest
-    local loader = {}
-    loader.pending = {}
-    loader.callbacks = {}
-    loader.loadedCount = 0
-    loader.resourceCount = 0
-    loader.thread = nil
-    loader.resourceBeingLoaded = nil
+    ---@field private thread love.Thread|nil
+    ---@field private resourceBeingLoaded shep.ResourceRequest|nil
+    local loader = {
+        pending = {},
+        callbacks = {},
+        loadedCount = 0,
+        resourceCount = 0,
+        thread = nil,
+        resourceBeingLoaded = nil
+    }
 
     --- Adds a new resource to be loaded.
     ---@private

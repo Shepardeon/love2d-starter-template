@@ -34,14 +34,14 @@ You must keep in mind that this project doesn't have the pretention to be "the b
 * A debug graph which can be used to monitor update time, draw time, memory usage and so on...
 * An async loading system which allows to load game resources (images, fonts, sounds and more) without blocking the main thread
 * Utility functions to operate on coordinates, vector components and tables
+* A localization module that can load multiple languages from json files or from code
 
 ## Planned features
 
-As of now, the library is about ~70-80% done before I'm contempt with it for a 1.0.0 release. On top of revisiting some existing modules to fix issues or add new features (ie. add memory details and graphics stats to the debug graph) I have the following features planned:
+As of now, the library is about ~75-85% done before I'm contempt with it for a 1.0.0 release. On top of revisiting some existing modules to fix issues or add new features (ie. add memory details and graphics stats to the debug graph) I have the following features planned:
 
 * An audio manager to put sounds in audio "categories" and manage their volume
 * A (simple) UI Library which can handle layout, buttons, label and 9Patch
-* A localization module
 * A loader for [Ldtk](https://ldtk.io/)
 
 ## License

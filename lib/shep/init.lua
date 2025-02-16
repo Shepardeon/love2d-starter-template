@@ -8,6 +8,7 @@ json = require("lib.json")
 -- Modules
 shep.debug = require("lib.shep.debug")
 shep.loader = require("lib.shep.loader")
+shep.localization = require("lib.shep.localization")
 shep.utils = require("lib.shep.utils")
 
 -- Classes
