@@ -1,6 +1,7 @@
 ---@class shep.Localization
 ---@field translations table<string, table<string, string>>
 local localization = {
+    fallbackLocale = 'fallback',
     currentLocale = 'fallback',
     translations = {
         fallback = {}
@@ -27,13 +28,15 @@ function localization:addEntry(language, uniqueKey, translation)
     self.translations[language][uniqueKey] = translation
 end
 
---- Get the translation for a given key
+--- Get the translation for a given key or return the key if
+--- the translation was not found in the current locale or the
+--- current fallback locale
 ---@param key string
 function localization:t(key)
     if self.translations[self.currentLocale] and self.translations[self.currentLocale][key] then
         return self.translations[self.currentLocale][key]
-    elseif self.translations['fallback'][key] then
-        return self.translations['fallback'][key]
+    elseif self.translations[self.fallbackLocale][key] then
+        return self.translations[self.fallbackLocale][key]
     else
         -- If the key is not found, return the key itself
         return key
@@ -44,6 +47,13 @@ end
 ---@param locale string
 function localization:setLocale(locale)
     self.currentLocale = locale
+end
+
+--- Set the current fallback locale in case the current locale
+--- is missing a translation key
+---@param locale string
+function localization:setFallbackLocale(locale)
+    self.fallbackLocale = locale
 end
 
 --- Load translations from a file
