@@ -1,6 +1,5 @@
 local EventManager = require("lib.shep.eventManager")
 local InputManager = require("lib.shep.inputManager")
-local Timer = require("lib.hump.timer")
 
 ---@class shep.Game: Object
 ---@field private scenes table<shep.Scene>

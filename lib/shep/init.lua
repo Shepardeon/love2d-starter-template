@@ -2,7 +2,12 @@ local shep = { _version = "1.0.0" }
 
 -- Global scope
 Object = require("lib.classic")
+Timer = require("lib.hump.timer")
 json = require("lib.json")
+badr = require("lib.badr")
+lume = require("lib.lume")
+bump = require("lib.bump")
+
 -- Load all the modules
 
 -- Modules

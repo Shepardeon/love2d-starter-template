@@ -1,5 +1,3 @@
-local lume = require('lib.lume')
-
 ---@class shep.EventManager
 ---@field private events table<string, table<function>>
 local EventManager = Object:extend()

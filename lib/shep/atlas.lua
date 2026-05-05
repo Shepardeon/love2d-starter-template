@@ -1,5 +1,3 @@
-local lume = require('lib.lume')
-
 ---@class shep.AtlasOptions
 local defaultOptions = {
     ---@type number|nil

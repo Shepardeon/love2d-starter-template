@@ -1,4 +1,3 @@
-local lume = require('lib.lume')
 local utils = require('lib.shep.utils')
 
 local min = math.min

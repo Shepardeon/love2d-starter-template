@@ -1,5 +1,3 @@
-local lume = require('lib.lume')
-
 ---@class shep.InputManager
 ---@field private state table<string, boolean>
 ---@field private prevState table<string, boolean>

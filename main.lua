@@ -106,6 +106,7 @@ end
 local renderPipeline
 local shaderParams = { saturation = 1 }
 local images = {}
+local data = {}
 local finishedLoading = false
 
 function love.load()
@@ -207,8 +208,10 @@ function love.load()
 
     -- Test loading an image
     shep.loader:newImage(images, 'testImage', 'assets/ranger_f.png')
+    shep.loader:newJsonData(data, 'fr', 'assets/lang/fr.json')
     shep.loader:start(nil, function()
         shep.utils.printAll("All data loaded", "Image loaded", images.testImage)
+        shep.utils.printTable(data.fr);
         finishedLoading = true
     end)
 end

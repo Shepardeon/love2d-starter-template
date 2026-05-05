@@ -9,6 +9,11 @@ local utils = require('lib.shep.utils')
 local channelPrefix = 'shepLoader_'
 local isThread = ...
 
+-- Required since global json lib is not accessible to thread
+if isThread then
+    json = require('lib.json')
+end
+
 local function passthrough(value)
     return value
 end
@@ -97,6 +102,12 @@ local resources = {
         resourceKey = 'rawData',
         constructor = love.filesystem.read,
         postProcess = passthrough
+    },
+    jsonData = {
+        requestKey = 'jsonDataPath',
+        resourceKey = 'jsonData',
+        constructor = love.filesystem.read,
+        postProcess = json.decode
     }
 }
 
@@ -257,6 +268,14 @@ else
     ---@param path string
     function loader:newRawData(holder, key, path)
         self:newResource('textData', holder, key, path)
+    end
+
+    --- Adds a new json data resource.
+    ---@param holder table
+    ---@param key string
+    ---@param path string
+    function loader:newJsonData(holder, key, path)
+        self:newResource('jsonData', holder, key, path)
     end
 
     --- Starts the loader thread.

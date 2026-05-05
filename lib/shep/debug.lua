@@ -1,7 +1,6 @@
 ---@diagnostic disable: undefined-field, redundant-parameter
 
 local utils = require("lib.shep.utils")
-local lume = require("lib.lume")
 
 ---@class shep.Debug
 local debug = {}

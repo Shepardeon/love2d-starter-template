@@ -1,6 +1,3 @@
-local lume = require('lib.lume')
-local bump = require('lib.bump')
-
 --- @class shep.Scene: Object
 --- @field private entities shep.Entity[]
 --- @field world bump.World

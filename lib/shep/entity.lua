@@ -1,5 +1,3 @@
-local lume = require('lib.lume')
-
 ---@class shep.Entity: Object
 ---@field uuid string
 ---@field protected alive boolean
