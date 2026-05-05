@@ -10,39 +10,39 @@ You must keep in mind that this project doesn't have the pretention to be "the b
 
 ## What's included
 
-* [Bump](https://github.com/kikito/bump.lua): A collision-detection library for axis-aligned rectangles.
-* [Classic](https://github.com/rxi/classic): A tiny class module for Lua (globally imported as Object when requiring shep).
-* [Json](https://github.com/rxi/json.lua): A lightweight JSON library for Lua.
-* [Lume](https://github.com/rxi/lume): A collection of functions geared towards game development. Also provides module hotswapping.
-* [Hump.timer](https://github.com/vrld/hump/blob/master/timer.lua): A simple interface to schedule the execution of functions.
-* [Shep](https://github.com/Shepardeon/love2d-starter-template/tree/main/lib/shep): A starter library which brings an opiniated game structure which can handle input, game states, scene, entities, cameras and more.
-* A VSCode configuration based on [Sheepolution's book](https://sheepolution.com/learn/book/bonus/vscode).
-* A build task wrapping [makelove](https://github.com/pfirsich/makelove) which needs to be installed separately.
-* An opinionated directory structure.
+- [Bump](https://github.com/kikito/bump.lua): A collision-detection library for axis-aligned rectangles.
+- [Badr](https://github.com/Nabeel20/Badr): An easy and enjoyable UI library.
+- [Classic](https://github.com/rxi/classic): A tiny class module for Lua (globally imported as Object when requiring shep).
+- [Json](https://github.com/rxi/json.lua): A lightweight JSON library for Lua.
+- [Lume](https://github.com/rxi/lume): A collection of functions geared towards game development. Also provides module hotswapping.
+- [Hump.timer](https://github.com/vrld/hump/blob/master/timer.lua): A simple interface to schedule the execution of functions.
+- [Shep](https://github.com/Shepardeon/love2d-starter-template/tree/main/lib/shep): A starter library which brings an opiniated game structure which can handle input, game states, scene, entities, cameras and more.
+- A VSCode configuration based on [Sheepolution's book](https://sheepolution.com/learn/book/bonus/vscode).
+- A build task wrapping [makelove](https://github.com/pfirsich/makelove) which needs to be installed separately.
+- An opinionated directory structure.
 
 ## Shep Features
 
-* A Game > Scene > Entity hierarchy
-* An event system to register and subscribe to events (observer pattern)
-* An input manager system which handles keyboard, mouse, gamepad (button press, release, hold, sequence)
-* A delegate state machine which represents states and stateflows using regular functions
-* An atlas management system that can use spritebatch
-* An animation system which uses the atlas system
-* A camera system that can handle multiple layers with parallax
-* A shader pipeline that can chain multiple shaders back to back
-* A rendering pipeline that combines camera+shaders+resolution handling
-* A debug graph which can be used to monitor update time, draw time, memory usage and so on...
-* An async loading system which allows to load game resources (images, fonts, sounds and more) without blocking the main thread
-* Utility functions to operate on coordinates, vector components and tables
-* A localization module that can load multiple languages from json files or from code
+- A Game > Scene > Entity hierarchy
+- An event system to register and subscribe to events (observer pattern)
+- An input manager system which handles keyboard, mouse, gamepad (button press, release, hold, sequence)
+- A delegate state machine which represents states and stateflows using regular functions
+- An atlas management system that can use spritebatch
+- An animation system which uses the atlas system
+- A camera system that can handle multiple layers with parallax
+- A shader pipeline that can chain multiple shaders back to back
+- A rendering pipeline that combines camera+shaders+resolution handling
+- A debug graph which can be used to monitor update time, draw time, memory usage and so on...
+- An async loading system which allows to load game resources (images, fonts, sounds and more) without blocking the main thread
+- Utility functions to operate on coordinates, vector components and tables
+- A localization module that can load multiple languages from json files or from code
 
 ## Planned features
 
 As of now, the library is about ~75-85% done before I'm contempt with it for a 1.0.0 release. On top of revisiting some existing modules to fix issues or add new features (ie. add memory details and graphics stats to the debug graph) I have the following features planned:
 
-* An audio manager to put sounds in audio "categories" and manage their volume
-* A (simple) UI Library which can handle layout, buttons, label and 9Patch
-* A loader for [Ldtk](https://ldtk.io/)
+- An audio manager to put sounds in audio "categories" and manage their volume
+- A loader for [Ldtk](https://ldtk.io/)
 
 ## License
 
