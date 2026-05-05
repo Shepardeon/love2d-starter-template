@@ -8,6 +8,7 @@ local InputManager = require('lib.shep.inputManager')
 ---@field window table<string, number>
 ---@field events shep.EventManager
 ---@field input shep.InputManager
+---@field globalTimer hump.Timer
 local Game = Object:extend()
 
 ---@class shep.GameWindowOptions
