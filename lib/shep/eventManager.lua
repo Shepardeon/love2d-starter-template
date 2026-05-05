@@ -10,8 +10,8 @@ end
 --- Adds a new event.
 ---@param eventName string
 function EventManager:addEvent(eventName)
-    if (self.events[eventName] ~= nil) then
-        error("Event already exists with name " .. eventName, 2)
+    if self.events[eventName] ~= nil then
+        error('Event already exists with name ' .. eventName, 2)
     end
 
     self.events[eventName] = {}
@@ -28,12 +28,12 @@ end
 ---@param callback function
 ---@param shouldReplace boolean|nil
 function EventManager:hook(eventName, callback, shouldReplace)
-    if (self.events[eventName] == nil) then
-        error("Event not found with name " .. eventName, 2)
+    if self.events[eventName] == nil then
+        error('Event not found with name ' .. eventName, 2)
     end
 
-    if (lume.find(self.events[eventName], callback) ~= nil) then
-        error("Given callback already exists for event " .. eventName, 2)
+    if lume.find(self.events[eventName], callback) ~= nil then
+        error('Given callback already exists for event ' .. eventName, 2)
     end
 
     shouldReplace = shouldReplace or false
@@ -49,8 +49,8 @@ end
 ---@param eventName string
 ---@param callback function
 function EventManager:unhook(eventName, callback)
-    if (self.events[eventName] == nil) then
-        error("Event not found with name " .. eventName, 2)
+    if self.events[eventName] == nil then
+        error('Event not found with name ' .. eventName, 2)
     end
 
     lume.remove(self.events[eventName], callback)
@@ -70,8 +70,8 @@ end
 ---@param eventName string
 ---@param ... any
 function EventManager:fire(eventName, ...)
-    if (self.events[eventName] == nil) then
-        error("Event not found with name " .. eventName, 2)
+    if self.events[eventName] == nil then
+        error('Event not found with name ' .. eventName, 2)
     end
 
     for _, callback in ipairs(self.events[eventName]) do

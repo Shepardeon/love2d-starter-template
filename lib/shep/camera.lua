@@ -26,7 +26,9 @@ local Camera = Object:extend()
 
 Camera.smoothingFunctions = {
     none = function()
-        return function(dt, dx, dy) return dx,dy end
+        return function(dt, dx, dy)
+            return dx, dy
+        end
     end,
 
     linear = function(speed)
@@ -46,7 +48,7 @@ Camera.smoothingFunctions = {
             local dts = dt * (s or stiffness)
             return dx * dts, dy * dts
         end
-    end
+    end,
 }
 
 ---@class shep.CameraOptions
@@ -60,7 +62,7 @@ local defaultCamOptions = {
     ---@type love.StackType|nil
     mode = 'transform',
     ---@type function|nil
-    smoothingFunction = Camera.smoothingFunctions.none()
+    smoothingFunction = Camera.smoothingFunctions.none(),
 }
 
 ---@class shep.CameraLayerOptions
@@ -68,7 +70,7 @@ local defaultLayerOptions = {
     ---@type number|nil -- Controls how much the layer is translated based on the layer's scale
     speedToScaleRatio = 1,
     ---@type love.StackType|nil
-    mode = 'transform'
+    mode = 'transform',
 }
 
 --- Creates a new Camera instance.
@@ -102,7 +104,7 @@ function Camera:new(width, height, options)
     self.translate = self.increaseTranslation
     self.rotate = self.increaseRotation
 
-    Camera.addLayer(self, "main", 1)
+    Camera.addLayer(self, 'main', 1)
 
     if self.center then
         local containerW, containerH = Camera.getContainerDimensions(self)
@@ -134,7 +136,8 @@ end
 --- Updates the camera.
 function Camera:update()
     local xShakeAmount, yShakeAmount = self:sumShakes(self.shakes.x), self:sumShakes(self.shakes.y)
-    local xViewportShakeAmount, yViewportShakeAmount = self:sumShakes(self.viewportShakes.x), self:sumShakes(self.viewportShakes.y)
+    local xViewportShakeAmount, yViewportShakeAmount =
+        self:sumShakes(self.viewportShakes.x), self:sumShakes(self.viewportShakes.y)
 
     self:move(xShakeAmount, yShakeAmount)
     self:moveViewport(xViewportShakeAmount, yViewportShakeAmount)
@@ -237,7 +240,10 @@ function Camera:addLayer(name, scale, layerOptions)
         love.graphics.translate(-self.x + self.offsetX, self.y + self.offsetY)
         love.graphics.rotate(self.rotation)
         love.graphics.scale(layer.scale)
-        love.graphics.translate(-self.translationX * layer.speedToScaleRatio, -self.translationY * layer.speedToScaleRatio)
+        love.graphics.translate(
+            -self.translationX * layer.speedToScaleRatio,
+            -self.translationY * layer.speedToScaleRatio
+        )
     end
     layer.pop = love.graphics.pop
 
@@ -253,7 +259,7 @@ end
 ---@return shep.CameraLayer
 function Camera:getLayer(name)
     if self.layers[name] == nil then
-        error("Layer not found with name " .. name, 2)
+        error('Layer not found with name ' .. name, 2)
     end
 
     return self.layers[name]
@@ -262,13 +268,13 @@ end
 --- Pushes the camera state.
 ---@param layer string|nil
 function Camera:push(layer)
-    self:getLayer(layer or "main"):push()
+    self:getLayer(layer or 'main'):push()
 end
 
 --- Pops the camera state.
 ---@param layer string|nil
 function Camera:pop(layer)
-    self:getLayer(layer or "main"):pop()
+    self:getLayer(layer or 'main'):pop()
 end
 
 --- Gets the world coordinates from screen coordinates.
@@ -277,12 +283,13 @@ end
 ---@param layer string|nil
 ---@return number, number
 function Camera:getWorldCoordinates(x, y, layer)
-    local currentLayer = self:getLayer(layer or "main")
+    local currentLayer = self:getLayer(layer or 'main')
     local scaleFactor = self.scale * self.aspectRatioScale * currentLayer.scale
     x, y = x - self.x - self.offsetX, y - self.y - self.offsetY
     x, y = utils.rotateAboutPoint(x, y, 0, 0, -self.rotation)
     x, y = x / scaleFactor, y / scaleFactor
-    return x + self.translationX * currentLayer.speedToScaleRatio, y + self.translationY * currentLayer.speedToScaleRatio
+    return x + self.translationX * currentLayer.speedToScaleRatio,
+        y + self.translationY * currentLayer.speedToScaleRatio
 end
 
 --- Gets the screen coordinates from world coordinates.
@@ -291,9 +298,10 @@ end
 ---@param layer string|nil
 ---@return number, number
 function Camera:getScreenCoordinates(x, y, layer)
-    local currentLayer = self:getLayer(layer or "main")
+    local currentLayer = self:getLayer(layer or 'main')
     local scaleFactor = self.scale * self.aspectRatioScale * currentLayer.scale
-    x, y = x - self.translationX / currentLayer.speedToScaleRatio, y - self.translationY / currentLayer.speedToScaleRatio
+    x, y =
+        x - self.translationX / currentLayer.speedToScaleRatio, y - self.translationY / currentLayer.speedToScaleRatio
     x, y = x * scaleFactor, y * scaleFactor
     x, y = utils.rotateAboutPoint(x, y, 0, 0, self.rotation)
     return x + self.x + self.offsetX, y + self.y + self.offsetY
@@ -473,17 +481,17 @@ function Camera.Shake:new(amplitude, frequency, duration)
 
     local sampleCount = (self.duration / 1000) * frequency
     self.samples = {}
-    for i = 1 , sampleCount do
+    for i = 1, sampleCount do
         self.samples[i] = lume.random(-1, 1)
     end
 
-    self.startTime = love.timer.getTime()*1000
+    self.startTime = love.timer.getTime() * 1000
     self.t = 0
     self.shaking = true
 end
 
 function Camera.Shake:update()
-    self.t = love.timer.getTime()*1000 - self.startTime
+    self.t = love.timer.getTime() * 1000 - self.startTime
     if self.t > self.duration then
         self.shaking = false
     end
@@ -492,7 +500,9 @@ end
 ---@param t number|nil
 function Camera.Shake:getAmplitude(t)
     if not t then
-        if not self.shaking then return 0 end
+        if not self.shaking then
+            return 0
+        end
         t = self.t
     end
 
@@ -501,7 +511,9 @@ function Camera.Shake:getAmplitude(t)
     local sample1 = sample0 + 1
     local decay = self:decay(t)
 
-    return self.amplitude * (self:noise(sample0) + (rawSamples - sample0) * (self:noise(sample1) - self:noise(sample0))) * decay
+    return self.amplitude
+        * (self:noise(sample0) + (rawSamples - sample0) * (self:noise(sample1) - self:noise(sample0)))
+        * decay
 end
 
 ---@private

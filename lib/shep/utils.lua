@@ -11,7 +11,7 @@ local sin = math.sin
 ---@param y2 number
 ---@return number
 function utils.distance(x1, y1, x2, y2)
-    return sqrt((x2 - x1)^2 + (y2 - y1)^2)
+    return sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 end
 
 --- Calculates the squared distance between two points.
@@ -21,7 +21,7 @@ end
 ---@param y2 number
 ---@return number
 function utils.distance2(x1, y1, x2, y2)
-    return (x2 - x1)^2 + (y2 - y1)^2
+    return (x2 - x1) ^ 2 + (y2 - y1) ^ 2
 end
 
 --- Calculates the length of a vector.
@@ -29,7 +29,7 @@ end
 ---@param y number
 ---@return number
 function utils.length(x, y)
-    return sqrt(x^2 + y^2)
+    return sqrt(x ^ 2 + y ^ 2)
 end
 
 --- Calculates the squared length of a vector.
@@ -37,7 +37,7 @@ end
 ---@param y number
 ---@return number
 function utils.length2(x, y)
-    return x^2 + y^2
+    return x ^ 2 + y ^ 2
 end
 
 --- Normalizes a vector.
@@ -97,7 +97,7 @@ end
 
 --- Prints all arguments.
 function utils.printAll(...)
-    local args = {...}
+    local args = { ... }
     for _, v in ipairs(args) do
         print(v)
     end
@@ -105,8 +105,8 @@ end
 
 --- Prints all arguments as a single concatenated string.
 function utils.printText(...)
-    local args = {...}
-    print(table.concat(args, " "))
+    local args = { ... }
+    print(table.concat(args, ' '))
 end
 
 --- Prints the contents of a table.

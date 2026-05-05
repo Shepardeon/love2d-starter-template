@@ -13,7 +13,7 @@ local defaultOptions = {
     ---@type number|nil
     paddingY = 0, -- Global image padding in Y
     ---@type number|nil -- Maximum number of sprites the attached sprite batch can hold, autogrows if exceeded in LÖVE ^11.0
-    batchLimit = 50
+    batchLimit = 50,
 }
 
 ---@class shep.Atlas
@@ -40,7 +40,7 @@ function Atlas:new(image, options)
 
     self.sourceImage = {
         width = self.image:getWidth(),
-        height = self.image:getHeight()
+        height = self.image:getHeight(),
     }
 
     self.spriteBatch = love.graphics.newSpriteBatch(self.image, self.options.batchLimit)
@@ -54,7 +54,7 @@ end
 ---@param mulH number|nil -- Multiplier for the tileHeight (defaults to 1)
 function Atlas:addQuad(name, posX, posY, mulW, mulH)
     if self.quads[name] then
-        error("Quad with name '" .. name .. "' already exists", 2)
+        error('Quad with name \'' .. name .. '\' already exists', 2)
     end
 
     local spacingX = self.options.spacingX * posX + self.options.paddingX
@@ -79,17 +79,10 @@ end
 ---@param h number -- The height of the quad
 function Atlas:addQuadRaw(name, x, y, w, h)
     if self.quads[name] then
-        error("Quad with name '" .. name .. "' already exists", 2)
+        error('Quad with name \'' .. name .. '\' already exists', 2)
     end
 
-    self.quads[name] = love.graphics.newQuad(
-        x,
-        y,
-        w,
-        h,
-        self.sourceImage.width,
-        self.sourceImage.height
-    )
+    self.quads[name] = love.graphics.newQuad(x, y, w, h, self.sourceImage.width, self.sourceImage.height)
 end
 
 --- Draws only a quad from the atlas.
@@ -105,7 +98,7 @@ end
 ---@param ky number|nil
 function Atlas:drawQuad(name, x, y, r, sx, sy, ox, oy, kx, ky)
     if not self.quads[name] then
-        error("Quad with name '" .. name .. "' does not exist", 2)
+        error('Quad with name \'' .. name .. '\' does not exist', 2)
     end
 
     love.graphics.draw(self.image, self.quads[name], x, y, r, sx, sy, ox, oy, kx, ky)
@@ -125,7 +118,7 @@ end
 ---@return number -- The index of the quad in the sprite batch
 function Atlas:addToBatch(name, x, y, r, sx, sy, ox, oy, kx, ky)
     if not self.quads[name] then
-        error("Quad with name '" .. name .. "' does not exist", 2)
+        error('Quad with name \'' .. name .. '\' does not exist', 2)
     end
 
     local idx = self.spriteBatch:add(self.quads[name], x, y, r, sx, sy, ox, oy, kx, ky)
@@ -148,7 +141,7 @@ end
 ---@param ky number|nil
 function Atlas:updateBatch(idx, name, x, y, r, sx, sy, ox, oy, kx, ky)
     if not self.quadsInBatch[idx] then
-        error("Nothing to update in the batch with id " .. idx, 2)
+        error('Nothing to update in the batch with id ' .. idx, 2)
     end
 
     -- Switch the quad only if it actually changed, otherwise just update its position
@@ -157,14 +150,13 @@ function Atlas:updateBatch(idx, name, x, y, r, sx, sy, ox, oy, kx, ky)
     else
         self.spriteBatch:set(idx, self.quads[name], x, y, r, sx, sy, ox, oy, kx, ky)
     end
-
 end
 
 --- Removes a quad from the sprite batch.
 ---@param idx number -- The index of the quad in the sprite batch
 function Atlas:removeFromBatch(idx)
     if not self.quadsInBatch[idx] then
-        error("Nothing to update in the batch with id " .. idx, 2)
+        error('Nothing to update in the batch with id ' .. idx, 2)
     end
 
     -- Hack to fakely remove something from the spritebatch without

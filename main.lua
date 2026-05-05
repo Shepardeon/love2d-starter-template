@@ -27,8 +27,8 @@ function Player:new(scene)
 
     --- Test atlas
     self.spriteAtlas = shep.Atlas('assets/ranger_f.png', {
-        tileWidth = 15*2,
-        tileHeight = 18*2,
+        tileWidth = 15 * 2,
+        tileHeight = 18 * 2,
         spacingX = 1,
     })
 
@@ -40,13 +40,13 @@ function Player:new(scene)
     self.spriteAtlas:addQuad('walk_right3', 2, 1)
 
     --- Animations can be built directly from the atlas
-    local walkRightFrames = {'walk_right1', 'walk_right2', 'walk_right3', 'walk_right2'}
-    self.animator:addAnimation('walk_right', walkRightFrames, {0.1, 0.1, 0.1, 0.1})
+    local walkRightFrames = { 'walk_right1', 'walk_right2', 'walk_right3', 'walk_right2' }
+    self.animator:addAnimation('walk_right', walkRightFrames, { 0.1, 0.1, 0.1, 0.1 })
     self.animator:setAnimation('walk_right')
 
     --- Or they can be created directly from the animator
-    local walkLeftFrames = self.animator:getFrames('walk_left', 0,3, 1,3, 2,3, 1,3)
-    self.animator:addAnimation('walk_left', walkLeftFrames, {0.1, 0.1, 0.1, 0.1})
+    local walkLeftFrames = self.animator:getFrames('walk_left', 0, 3, 1, 3, 2, 3, 1, 3)
+    self.animator:addAnimation('walk_left', walkLeftFrames, { 0.1, 0.1, 0.1, 0.1 })
 
     self.currentAnimation = 'walk_right'
 
@@ -86,20 +86,20 @@ function Player:draw()
 end
 
 function Player:idleState()
-    print("I am in idle state")
-    print("My UUID is", self.uuid)
+    print('I am in idle state')
+    print('My UUID is', self.uuid)
 end
 
 function Player:exitIdleState()
-    print("I am exiting idle state")
+    print('I am exiting idle state')
 end
 
 function Player:jumpState()
-    print("I am in jump state")
+    print('I am in jump state')
 end
 
 function Player:enterJumpState()
-    print("I am entering jump state")
+    print('I am entering jump state')
 end
 --#endregion
 
@@ -115,11 +115,10 @@ function love.load()
 
     -- Initialize the game and renderer
     game = shep.Game()
-    renderer = shep.Renderer(game.window.width, game.window.height, gameScale,
-    {
+    renderer = shep.Renderer(game.window.width, game.window.height, gameScale, {
         center = true,
         maintainAspectRatio = true,
-        smoothingFunction = shep.Camera.smoothingFunctions.linear(75)
+        smoothingFunction = shep.Camera.smoothingFunctions.linear(75),
     })
 
     shep.localization:loadFromDirectory('assets/lang')
@@ -138,7 +137,7 @@ function love.load()
     scene:findEntity(myPlayer.uuid)
     local alive = myPlayer:isAlive()
 
-    shep.utils.printAll("The entity is alive ?", alive)
+    shep.utils.printAll('The entity is alive ?', alive)
 
     -- Bind input actions
     game.input:bind('space', 'jump')
@@ -151,7 +150,7 @@ function love.load()
     game.input:bind('f2', function()
         shep.debug.config.drawGraph = not shep.debug.config.drawGraph
     end)
-    game.input:bind('f3', function ()
+    game.input:bind('f3', function()
         local locale = shep.localization.currentLocale == 'en' and 'fr' or 'en'
         shep.localization:setLocale(locale)
     end)
@@ -159,7 +158,7 @@ function love.load()
     -- Add and hook events
     game.events:addEvent('onJump')
     game.events:hook('onJump', function()
-        shep.utils.printText('Player jumped!', "I called that from an event!")
+        shep.utils.printText('Player jumped!', 'I called that from an event!')
     end)
 
     game.events:hook('gameResized', function(w, h, scale)
@@ -210,14 +209,14 @@ function love.load()
     shep.loader:newImage(images, 'testImage', 'assets/ranger_f.png')
     shep.loader:newJsonData(data, 'fr', 'assets/lang/fr.json')
     shep.loader:start(nil, function()
-        shep.utils.printAll("All data loaded", "Image loaded", images.testImage)
-        shep.utils.printTable(data.fr);
+        shep.utils.printAll('All data loaded', 'Image loaded', images.testImage)
+        shep.utils.printTable(data.fr)
         finishedLoading = true
     end)
 end
 
 function love.update(dt)
-    if (game.input:pressed('jump')) then
+    if game.input:pressed('jump') then
         game.events:fire('onJump')
     end
     renderPipeline:send('desaturate', 'saturation', shaderParams.saturation)

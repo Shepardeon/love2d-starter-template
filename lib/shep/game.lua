@@ -1,5 +1,5 @@
-local EventManager = require("lib.shep.eventManager")
-local InputManager = require("lib.shep.inputManager")
+local EventManager = require('lib.shep.eventManager')
+local InputManager = require('lib.shep.inputManager')
 
 ---@class shep.Game: Object
 ---@field private scenes table<shep.Scene>
@@ -19,7 +19,7 @@ local defaultWindowOptions = {
     width = 960,
     height = 540,
     scaleX = 1,
-    scaleY = 1
+    scaleY = 1,
 }
 
 --- Creates a new Game instance.
@@ -28,7 +28,7 @@ function Game:new(windowOptions)
     self.scenes = {}
     self.currentScene = nil
     self.timeScale = 1
-    self.window =  windowOptions or defaultWindowOptions
+    self.window = windowOptions or defaultWindowOptions
 
     self.globalTimer = Timer()
     self.events = EventManager()
@@ -50,7 +50,7 @@ end
 function Game:switchScene(index)
     local scene = self.scenes[index]
     if scene == nil then
-        error("Scene not found with index " .. index, 2)
+        error('Scene not found with index ' .. index, 2)
     end
 
     if self.currentScene then
@@ -89,7 +89,7 @@ end
 ---@param duration number
 function Game:setTimeScaleFor(timeScale, duration)
     self.timeScale = timeScale
-    self.globalTimer:tween('timeScale', duration, self, {timeScale = 1}, 'in-out-cubic')
+    self.globalTimer:tween('timeScale', duration, self, { timeScale = 1 }, 'in-out-cubic')
 end
 
 --- Updates the game.

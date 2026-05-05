@@ -1,5 +1,5 @@
-local Atlas = require("lib.shep.atlas")
-local utils = require("lib.shep.utils")
+local Atlas = require('lib.shep.atlas')
+local utils = require('lib.shep.utils')
 
 ---@class shep.Animator
 ---@field private atlas shep.Atlas
@@ -15,7 +15,7 @@ local Animator = Object:extend()
 ---@param sharedAtlas shep.Atlas|nil
 function Animator:new(sharedAtlas, image, atlasOptions)
     if not sharedAtlas and not image then
-        error("Either sharedAtlas or image must be provided", 2)
+        error('Either sharedAtlas or image must be provided', 2)
     end
 
     self.atlas = sharedAtlas or Atlas(image --[[@as string|love.Image]], atlasOptions)
@@ -33,16 +33,16 @@ function Animator:getFrames(name, ...)
     local frames = ...
 
     if not (type(frames) == 'table') then
-        frames = {...}
+        frames = { ... }
     end
 
     if not (#frames % 2 == 0) then
-        error("Number of arguments must be even", 2)
+        error('Number of arguments must be even', 2)
     end
 
     local groupedFrames = {}
     for i = 1, #frames, 2 do
-        table.insert(groupedFrames, {frames[i], frames[i + 1]})
+        table.insert(groupedFrames, { frames[i], frames[i + 1] })
     end
 
     local finalFrames = {}
@@ -52,7 +52,7 @@ function Animator:getFrames(name, ...)
         local row = frame[2]
 
         if type(col) ~= 'number' or type(row) ~= 'number' then
-            error("Frame coordinates must be numbers", 2)
+            error('Frame coordinates must be numbers', 2)
         end
 
         self.atlas:addQuad(name .. i, col, row)
@@ -69,14 +69,14 @@ end
 ---@param onLoop fun(anim: shep.Animation, loops: number)|string|nil -- If passed 'pauseOnLoop', the animation will pause on loop
 function Animator:addAnimation(name, frames, durations, onLoop)
     if self.animations[name] then
-        error("Animation with name '" .. name .. "' already exists", 2)
+        error('Animation with name \'' .. name .. '\' already exists', 2)
     end
 
     if type(durations) == 'number' then
         durations = utils.repeatTable(durations, #frames)
     else
         if #durations ~= #frames then
-            error("Number of durations must match number of frames", 2)
+            error('Number of durations must match number of frames', 2)
         end
     end
 
@@ -113,7 +113,7 @@ end
 ---@param name string
 function Animator:setAnimation(name)
     if not self.animations[name] then
-        error("Animation with name '" .. name .. "' does not exist", 2)
+        error('Animation with name \'' .. name .. '\' does not exist', 2)
     end
 
     self.currentAnimation = self.animations[name]
@@ -129,7 +129,10 @@ function Animator:update(dt)
     if self.currentAnimation and not self.currentAnimation.paused then
         self.currentAnimation.currentTime = self.currentAnimation.currentTime + dt
 
-        if self.currentAnimation.currentTime >= self.currentAnimation.durations[self.currentAnimation.currentFrameIndex] then
+        if
+            self.currentAnimation.currentTime
+            >= self.currentAnimation.durations[self.currentAnimation.currentFrameIndex]
+        then
             self.currentAnimation.currentTime = 0
             self.currentAnimation.currentFrameIndex = self.currentAnimation.currentFrameIndex + 1
 
@@ -160,17 +163,47 @@ function Animator:draw(x, y, r, sx, sy, ox, oy, kx, ky)
     if self.currentAnimation then
         if self.useSpriteBatch then
             if self.batchIndex == nil then
-                self.batchIndex = self.atlas:addToBatch(self.currentAnimation.frames[self.currentAnimation.currentFrameIndex],
-                x, y, r, sx, sy, ox, oy, kx, ky)
-            else
-                self.atlas:updateBatch(self.batchIndex,
+                self.batchIndex = self.atlas:addToBatch(
                     self.currentAnimation.frames[self.currentAnimation.currentFrameIndex],
-                    x, y, r, sx, sy, ox, oy, kx, ky)
+                    x,
+                    y,
+                    r,
+                    sx,
+                    sy,
+                    ox,
+                    oy,
+                    kx,
+                    ky
+                )
+            else
+                self.atlas:updateBatch(
+                    self.batchIndex,
+                    self.currentAnimation.frames[self.currentAnimation.currentFrameIndex],
+                    x,
+                    y,
+                    r,
+                    sx,
+                    sy,
+                    ox,
+                    oy,
+                    kx,
+                    ky
+                )
             end
             -- Shared atlas must be drawn by the final user
         else
-            self.atlas:drawQuad(self.currentAnimation.frames[self.currentAnimation.currentFrameIndex],
-                x, y, r, sx, sy, ox, oy, kx, ky)
+            self.atlas:drawQuad(
+                self.currentAnimation.frames[self.currentAnimation.currentFrameIndex],
+                x,
+                y,
+                r,
+                sx,
+                sy,
+                ox,
+                oy,
+                kx,
+                ky
+            )
         end
     end
 end

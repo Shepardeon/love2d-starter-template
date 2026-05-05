@@ -22,5 +22,8 @@
   ],
   "cSpell.ignorePaths": ["lib/**", ".vscode"],
   "Lua.diagnostics.globals": ["lldebugger", "json", "badr", "lume", "bump"],
-  "editor.tabSize": 4
+  "editor.tabSize": 4,
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  }
 }

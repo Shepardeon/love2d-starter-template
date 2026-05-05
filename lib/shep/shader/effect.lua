@@ -20,7 +20,7 @@ end
 function Effect:build()
     for param, value in pairs(self.defaults) do
         if not self.setters[param] then
-            error("No setter found for perameter: " .. param)
+            error('No setter found for perameter: ' .. param)
         end
 
         self.setters[param](value)

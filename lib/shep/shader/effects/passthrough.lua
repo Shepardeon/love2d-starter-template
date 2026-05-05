@@ -1,11 +1,9 @@
 local Effect = require('lib.shep.shader.effect')
 
-return function ()
-    local passthrough = Effect(
-        'passthrough'
-    )
+return function()
+    local passthrough = Effect('passthrough')
 
-    passthrough.draw = function (pipeline, buffer, shaderObj)
+    passthrough.draw = function(pipeline, buffer, shaderObj)
         local front, back = buffer(pipeline)
         love.graphics.setCanvas(front)
         love.graphics.clear()

@@ -27,14 +27,14 @@ function Renderer:new(gameWidth, gameHeight, renderScale, cameraOptions)
     self.mainCamera = Camera(gameWidth, gameHeight, cameraOptions)
     self.mainCanvas = love.graphics.newCanvas(gameWidth * renderScale, gameHeight * renderScale)
     self.renderIndex = {
-        _main = 1
+        _main = 1,
     }
     self.renderPasses = {
         [self.renderIndex._main] = {
             pipeline = Shader(Shader.Effects.passthrough, gameWidth * renderScale, gameHeight * renderScale),
             canvas = love.graphics.newCanvas(gameWidth * renderScale, gameHeight * renderScale),
-            draw = emptyDraw
-        }
+            draw = emptyDraw,
+        },
     }
 end
 
@@ -45,18 +45,18 @@ end
 ---@param draw fun()|nil
 function Renderer:addRenderPass(name, order, effect, draw)
     if self.renderIndex[name] then
-        error("Render pass with name '" .. name .. "' already exists", 2)
+        error('Render pass with name \'' .. name .. '\' already exists', 2)
     end
 
     if self.renderPasses[order] then
-        error("Render pass with order '" .. order .. "' already exists", 2)
+        error('Render pass with order \'' .. order .. '\' already exists', 2)
     end
 
     self.renderIndex[name] = order
     self.renderPasses[order] = {
         pipeline = Shader(effect, self.width * self.renderScale, self.height * self.renderScale),
         canvas = love.graphics.newCanvas(self.width * self.renderScale, self.height * self.renderScale),
-        draw = draw or emptyDraw
+        draw = draw or emptyDraw,
     }
 end
 
@@ -65,7 +65,7 @@ end
 ---@return shep.RenderPass
 function Renderer:getRenderPass(name)
     if not self.renderIndex[name] then
-        error("Render pass with name '" .. name .. "' does not exist", 2)
+        error('Render pass with name \'' .. name .. '\' does not exist', 2)
     end
 
     return self.renderPasses[self.renderIndex[name]]
@@ -76,7 +76,7 @@ end
 ---@return shep.ShaderPipeline
 function Renderer:getRenderPipeline(name)
     if not self.renderIndex[name] then
-        error("Render pass with name '" .. name .. "' does not exist", 2)
+        error('Render pass with name \'' .. name .. '\' does not exist', 2)
     end
 
     return self.renderPasses[self.renderIndex[name]].pipeline
@@ -87,7 +87,7 @@ end
 ---@param draw fun()
 function Renderer:setDrawFunction(name, draw)
     if not self.renderIndex[name] then
-        error("Render pass with name '" .. name .. "' does not exist", 2)
+        error('Render pass with name \'' .. name .. '\' does not exist', 2)
     end
 
     self.renderPasses[self.renderIndex[name]].draw = draw
@@ -125,23 +125,23 @@ function Renderer:draw()
         love.graphics.clear()
 
         pass.pipeline:push()
-            pass.draw()
+        pass.draw()
         pass.pipeline:pop()
 
         love.graphics.setCanvas(self.mainCanvas)
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.setBlendMode("alpha", "premultiplied")
+        love.graphics.setBlendMode('alpha', 'premultiplied')
         love.graphics.draw(pass.canvas, 0, 0, 0)
-        love.graphics.setBlendMode("alpha")
+        love.graphics.setBlendMode('alpha')
         drawnPasses = drawnPasses + 1
     end
 
     -- Draw the canvas to screen
     love.graphics.setCanvas()
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.setBlendMode("alpha", "premultiplied")
+    love.graphics.setBlendMode('alpha', 'premultiplied')
     love.graphics.draw(self.mainCanvas, 0, 0, 0, self.renderScale, self.renderScale)
-    love.graphics.setBlendMode("alpha")
+    love.graphics.setBlendMode('alpha')
     love.graphics.setBackgroundColor(bg_r, bg_g, bg_b, bg_a)
 end
 

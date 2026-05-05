@@ -9,17 +9,213 @@
 local InputManager = Object:extend()
 
 InputManager.all_keys = {
-    " ", "return", "escape", "backspace", "tab", "space", "!", "\"", "#", "$", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", "0", "1", "2", "3", "4",
-    "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "", "`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-    "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "capslock", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12", "printscreen",
-    "scrolllock", "pause", "insert", "home", "pageup", "delete", "end", "pagedown", "right", "left", "down", "up", "numlock", "kp/", "kp*", "kp-", "kp+", "kpenter",
-    "kp0", "kp1", "kp2", "kp3", "kp4", "kp5", "kp6", "kp7", "kp8", "kp9", "kp.", "kp,", "kp=", "application", "power", "f13", "f14", "f15", "f16", "f17", "f18", "f19",
-    "f20", "f21", "f22", "f23", "f24", "execute", "help", "menu", "select", "stop", "again", "undo", "cut", "copy", "paste", "find", "mute", "volumeup", "volumedown",
-    "alterase", "sysreq", "cancel", "clear", "prior", "return2", "separator", "out", "oper", "clearagain", "thsousandsseparator", "decimalseparator", "currencyunit",
-    "currencysubunit", "lctrl", "lshift", "lalt", "lgui", "rctrl", "rshift", "ralt", "rgui", "mode", "audionext", "audioprev", "audiostop", "audioplay", "audiomute",
-    "mediaselect", "brightnessdown", "brightnessup", "displayswitch", "kbdillumtoggle", "kbdillumdown", "kbdillumup", "eject", "sleep", "mouse1", "mouse2", "mouse3",
-    "mouse4", "mouse5", "wheelup", "wheeldown", "fdown", "fup", "fleft", "fright", "back", "guide", "start", "leftstick", "rightstick", "l1", "r1", "l2", "r2", "dpup",
-    "dpdown", "dpleft", "dpright", "leftx", "lefty", "rightx", "righty",
+    ' ',
+    'return',
+    'escape',
+    'backspace',
+    'tab',
+    'space',
+    '!',
+    '"',
+    '#',
+    '$',
+    '&',
+    '\'',
+    '(',
+    ')',
+    '*',
+    '+',
+    ',',
+    '-',
+    '.',
+    '/',
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    ':',
+    ';',
+    '<',
+    '=',
+    '>',
+    '?',
+    '@',
+    '[',
+    '\\',
+    ']',
+    '^',
+    '',
+    '`',
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'h',
+    'i',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'o',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'u',
+    'v',
+    'w',
+    'x',
+    'y',
+    'z',
+    'capslock',
+    'f1',
+    'f2',
+    'f3',
+    'f4',
+    'f5',
+    'f6',
+    'f7',
+    'f8',
+    'f9',
+    'f10',
+    'f11',
+    'f12',
+    'printscreen',
+    'scrolllock',
+    'pause',
+    'insert',
+    'home',
+    'pageup',
+    'delete',
+    'end',
+    'pagedown',
+    'right',
+    'left',
+    'down',
+    'up',
+    'numlock',
+    'kp/',
+    'kp*',
+    'kp-',
+    'kp+',
+    'kpenter',
+    'kp0',
+    'kp1',
+    'kp2',
+    'kp3',
+    'kp4',
+    'kp5',
+    'kp6',
+    'kp7',
+    'kp8',
+    'kp9',
+    'kp.',
+    'kp,',
+    'kp=',
+    'application',
+    'power',
+    'f13',
+    'f14',
+    'f15',
+    'f16',
+    'f17',
+    'f18',
+    'f19',
+    'f20',
+    'f21',
+    'f22',
+    'f23',
+    'f24',
+    'execute',
+    'help',
+    'menu',
+    'select',
+    'stop',
+    'again',
+    'undo',
+    'cut',
+    'copy',
+    'paste',
+    'find',
+    'mute',
+    'volumeup',
+    'volumedown',
+    'alterase',
+    'sysreq',
+    'cancel',
+    'clear',
+    'prior',
+    'return2',
+    'separator',
+    'out',
+    'oper',
+    'clearagain',
+    'thsousandsseparator',
+    'decimalseparator',
+    'currencyunit',
+    'currencysubunit',
+    'lctrl',
+    'lshift',
+    'lalt',
+    'lgui',
+    'rctrl',
+    'rshift',
+    'ralt',
+    'rgui',
+    'mode',
+    'audionext',
+    'audioprev',
+    'audiostop',
+    'audioplay',
+    'audiomute',
+    'mediaselect',
+    'brightnessdown',
+    'brightnessup',
+    'displayswitch',
+    'kbdillumtoggle',
+    'kbdillumdown',
+    'kbdillumup',
+    'eject',
+    'sleep',
+    'mouse1',
+    'mouse2',
+    'mouse3',
+    'mouse4',
+    'mouse5',
+    'wheelup',
+    'wheeldown',
+    'fdown',
+    'fup',
+    'fleft',
+    'fright',
+    'back',
+    'guide',
+    'start',
+    'leftstick',
+    'rightstick',
+    'l1',
+    'r1',
+    'l2',
+    'r2',
+    'dpup',
+    'dpdown',
+    'dpleft',
+    'dpright',
+    'leftx',
+    'lefty',
+    'rightx',
+    'righty',
 }
 
 --- Creates a new InputManager instance.
@@ -32,7 +228,16 @@ function InputManager:new()
     self.sequences = {}
     self.joystick = love.joystick.getJoysticks()
 
-    local callbacks = { "keypressed", "keyreleased", "mousepressed", "mousereleased", "gamepadpressed", "gamepadreleased", "gamepadaxis", "wheelmoved" }
+    local callbacks = {
+        'keypressed',
+        'keyreleased',
+        'mousepressed',
+        'mousereleased',
+        'gamepadpressed',
+        'gamepadreleased',
+        'gamepadaxis',
+        'wheelmoved',
+    }
     local oldFunctions = {}
     local emptyFn = function() end
 
@@ -49,7 +254,7 @@ end
 ---@param key string
 ---@param action function|string
 function InputManager:bind(key, action)
-    if type(action) == "function" then
+    if type(action) == 'function' then
         self.functions[key] = action
         return
     end
@@ -94,13 +299,15 @@ end
 --- Checks for a sequence of inputs to start an action.
 ---@param ... string
 function InputManager:sequence(...)
-    local sequence = {...}
-    if #sequence <= 1 then error("Sequence must have at least 2 actions, use :pressed when checking for one action") end
-    if type(sequence[#sequence]) ~= "string" then
-        error("Last argument must be an action")
+    local sequence = { ... }
+    if #sequence <= 1 then
+        error('Sequence must have at least 2 actions, use :pressed when checking for one action')
+    end
+    if type(sequence[#sequence]) ~= 'string' then
+        error('Last argument must be an action')
     end
     if #sequence % 2 == 0 then
-        error("Sequence must have an odd number of arguments")
+        error('Sequence must have an odd number of arguments')
     end
 
     local sequenceKey = ''
@@ -130,12 +337,12 @@ function InputManager:sequence(...)
             for _, key in ipairs(self.binds[action]) do
                 if self.state[key] and not self.prevState[key] then
                     if (love.timer.getTime() - self.sequences[sequenceKey].lastPressed) <= delay then
-                        if self.sequences[sequenceKey].currentIndex+1 == #self.sequences[sequenceKey].sequence then
+                        if self.sequences[sequenceKey].currentIndex + 1 == #self.sequences[sequenceKey].sequence then
                             self.sequences[sequenceKey] = nil
                             return true
                         else
                             self.sequences[sequenceKey].last_pressed = love.timer.getTime()
-                        self.sequences[sequenceKey].current_index = self.sequences[sequenceKey].current_index + 2
+                            self.sequences[sequenceKey].current_index = self.sequences[sequenceKey].current_index + 2
                         end
                     else
                         self.sequences[sequenceKey] = nil
@@ -146,11 +353,26 @@ function InputManager:sequence(...)
     end
 end
 
-local keyToButton = {mouse1 = '1', mouse2 = '2', mouse3 = '3', mouse4 = '4', mouse5 = '5'} 
-local gamepadToButton = {fdown = 'a', fup = 'y', fleft = 'x', fright = 'b', back = 'back', guide = 'guide', start = 'start',
-                        leftstick = 'leftstick', rightstick = 'rightstick', l1 = 'leftshoulder', r1 = 'rightshoulder',
-                        dpup = 'dpup', dpdown = 'dpdown', dpleft = 'dpleft', dpright = 'dpright'}
-local axisToButton = {leftx = 'leftx', lefty = 'lefty', rightx = 'rightx', righty = 'righty', l2 = 'triggerleft', r2 = 'triggerright'}
+local keyToButton = { mouse1 = '1', mouse2 = '2', mouse3 = '3', mouse4 = '4', mouse5 = '5' }
+local gamepadToButton = {
+    fdown = 'a',
+    fup = 'y',
+    fleft = 'x',
+    fright = 'b',
+    back = 'back',
+    guide = 'guide',
+    start = 'start',
+    leftstick = 'leftstick',
+    rightstick = 'rightstick',
+    l1 = 'leftshoulder',
+    r1 = 'rightshoulder',
+    dpup = 'dpup',
+    dpdown = 'dpdown',
+    dpleft = 'dpleft',
+    dpright = 'dpright',
+}
+local axisToButton =
+    { leftx = 'leftx', lefty = 'lefty', rightx = 'rightx', righty = 'righty', l2 = 'triggerleft', r2 = 'triggerright' }
 
 local function isKeyboardKey(key)
     return not (keyToButton[key] or gamepadToButton[key] or axisToButton[key])
@@ -165,7 +387,8 @@ function InputManager:down(action, interval, delay)
     if action and interval and delay then
         for _, key in ipairs(self.binds[action]) do
             if self.state[key] and not self.prevState[key] then
-                self.repeatState[key] = { pressed_time = love.timer.getTime(), delay = delay, interval = interval, delayStage = true }
+                self.repeatState[key] =
+                    { pressed_time = love.timer.getTime(), delay = delay, interval = interval, delayStage = true }
                 return true
             elseif self.repeatState[key] then
                 return self.repeatState[key].pressed
@@ -174,7 +397,8 @@ function InputManager:down(action, interval, delay)
     elseif action and interval and not delay then
         for _, key in ipairs(self.binds[action]) do
             if self.state[key] and not self.prevState[key] then
-                self.repeatState[key] = {pressed_time = love.timer.getTime(), delay = 0, interval = interval, delay_stage = false}
+                self.repeatState[key] =
+                    { pressed_time = love.timer.getTime(), delay = 0, interval = interval, delay_stage = false }
                 return true
             elseif self.repeatState[key] then
                 return self.repeatState[key].pressed
@@ -182,7 +406,10 @@ function InputManager:down(action, interval, delay)
         end
     elseif action and not interval and not delay then
         for _, key in ipairs(self.binds[action]) do
-            if (isKeyboardKey(key) and love.keyboard.isDown(key)) or (keyToButton[key] and love.mouse.isDown(keyToButton[key])) then
+            if
+                (isKeyboardKey(key) and love.keyboard.isDown(key))
+                or (keyToButton[key] and love.mouse.isDown(keyToButton[key]))
+            then
                 return true
             end
 
@@ -238,8 +465,8 @@ end
 function InputManager:update()
     self:pressed()
     self.prevState = lume.clone(self.state)
-    self.state["wheelup"] = false
-    self.state["wheeldown"] = false
+    self.state['wheelup'] = false
+    self.state['wheeldown'] = false
 
     for _, v in pairs(self.repeatState) do
         if v then
@@ -275,8 +502,16 @@ function InputManager:keyreleased(key)
 end
 
 local buttonToKey = {
-    [1] = "mouse1", [2] = "mouse2", [3] = "mouse3", [4] = "mouse4", [5] = "mouse5",
-    ["l"] = "mouse1", ["r"] = "mouse2", ["m"] = "mouse3", ["x1"] = "mouse4", ["x2"] = "mouse5"
+    [1] = 'mouse1',
+    [2] = 'mouse2',
+    [3] = 'mouse3',
+    [4] = 'mouse4',
+    [5] = 'mouse5',
+    ['l'] = 'mouse1',
+    ['r'] = 'mouse2',
+    ['m'] = 'mouse3',
+    ['x1'] = 'mouse4',
+    ['x2'] = 'mouse5',
 }
 
 ---@private
@@ -292,13 +527,30 @@ end
 
 ---@private
 function InputManager:wheelmoved(x, y)
-    if y > 0 then self.state["wheelup"] = true
-    elseif y < 0  then self.state["wheeldown"] = true end
+    if y > 0 then
+        self.state['wheelup'] = true
+    elseif y < 0 then
+        self.state['wheeldown'] = true
+    end
 end
 
-local buttonToGamepad = {a = 'fdown', y = 'fup', x = 'fleft', b = 'fright', back = 'back', guide = 'guide', start = 'start',
-                        leftstick = 'leftstick', rightstick = 'rightstick', leftshoulder = 'l1', rightshoulder = 'r1',
-                        dpup = 'dpup', dpdown = 'dpdown', dpleft = 'dpleft', dpright = 'dpright'}
+local buttonToGamepad = {
+    a = 'fdown',
+    y = 'fup',
+    x = 'fleft',
+    b = 'fright',
+    back = 'back',
+    guide = 'guide',
+    start = 'start',
+    leftstick = 'leftstick',
+    rightstick = 'rightstick',
+    leftshoulder = 'l1',
+    rightshoulder = 'r1',
+    dpup = 'dpup',
+    dpdown = 'dpdown',
+    dpleft = 'dpleft',
+    dpright = 'dpright',
+}
 
 ---@private
 function InputManager:gamepadpressed(joystick, button)
@@ -311,7 +563,8 @@ function InputManager:gamepadreleased(joystick, button)
     self.repeatState[buttonToGamepad[button]] = nil
 end
 
-local buttonToAxis = {leftx = 'leftx', lefty = 'lefty', rightx = 'rightx', righty = 'righty', triggerleft = 'l2', triggerright = 'r2'}
+local buttonToAxis =
+    { leftx = 'leftx', lefty = 'lefty', rightx = 'rightx', righty = 'righty', triggerleft = 'l2', triggerright = 'r2' }
 
 ---@private
 function InputManager:gamepadaxis(joystick, axis, newValue)

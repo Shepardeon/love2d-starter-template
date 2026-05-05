@@ -5,13 +5,14 @@ if IS_DEBUG then
 
     function love.errorhandler(msg)
         if lldebugger then
-        error(msg, 2)
+            error(msg, 2)
         else
-        return love_errorhandler(msg)
+            return love_errorhandler(msg)
         end
     end
 end
 
 function love.conf(t)
     t.window.title = 'Love2D Template'
+    t.version = '11.5'
 end

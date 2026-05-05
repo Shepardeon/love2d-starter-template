@@ -1,7 +1,7 @@
-require 'love.filesystem'
-require 'love.image'
-require 'love.audio'
-require 'love.sound'
+require('love.filesystem')
+require('love.image')
+require('love.audio')
+require('love.sound')
 
 local utils = require('lib.shep.utils')
 
@@ -28,87 +28,87 @@ local resources = {
     image = {
         requestKey = 'imagePath',
         resourceKey = 'imageData',
-        constructor = function (path)
+        constructor = function(path)
             if love.image.isCompressed(path) then
                 return love.image.newCompressedData(path)
             else
                 return love.image.newImageData(path)
             end
         end,
-        postProcess = function (data)
+        postProcess = function(data)
             return love.graphics.newImage(data)
-        end
+        end,
     },
     staticSource = {
         requestKey = 'staticPath',
         resourceKey = 'staticSource',
-        constructor = function (path)
+        constructor = function(path)
             return love.audio.newSource(path, 'static')
         end,
-        postProcess = passthrough
+        postProcess = passthrough,
     },
     font = {
         requestKey = 'fontPath',
         resourceKey = 'fontData',
-        constructor = function (path)
+        constructor = function(path)
             return love.filesystem.newFileData(path)
         end,
-        postProcess = function (data, resource)
+        postProcess = function(data, resource)
             local _, size = unpack(resource.requestParams)
             return love.graphics.newFont(data, size)
-        end
+        end,
     },
     BMFont = {
         requestKey = 'fontBMPath',
         resourceKey = 'fontBMData',
-        constructor = function (path)
+        constructor = function(path)
             return love.filesystem.newFileData(path)
         end,
-        postProcess = function (data, resource)
-            local _, glyphsPath  = unpack(resource.requestParams)
+        postProcess = function(data, resource)
+            local _, glyphsPath = unpack(resource.requestParams)
             local glyphs = love.filesystem.newFileData(glyphsPath)
             -- Cast here is false to avoid a warning however love.Data is a valid param
             return love.graphics.newFont(glyphs --[[@as string]], data)
-        end
+        end,
     },
     streamSource = {
         requestKey = 'streamPath',
         resourceKey = 'streamSource',
-        constructor = function (path)
+        constructor = function(path)
             return love.audio.newSource(path, 'stream')
         end,
-        postProcess = passthrough
+        postProcess = passthrough,
     },
     soundData = {
         requestKey = 'soundDataPathOrDecoder',
         resourceKey = 'soundData',
         constructor = love.sound.newSoundData,
-        postProcess = passthrough
+        postProcess = passthrough,
     },
     imageData = {
         requestKey = 'imageDataPath',
         resourceKey = 'rawImageData',
         constructor = love.image.newImageData,
-        postProcess = passthrough
+        postProcess = passthrough,
     },
     compressedData = {
         requestKey = 'compressedDataPath',
         resourceKey = 'compressedData',
         constructor = love.image.newCompressedData,
-        postProcess = passthrough
+        postProcess = passthrough,
     },
     textData = {
         requestKey = 'rawDataPath',
         resourceKey = 'rawData',
         constructor = love.filesystem.read,
-        postProcess = passthrough
+        postProcess = passthrough,
     },
     jsonData = {
         requestKey = 'jsonDataPath',
         resourceKey = 'jsonData',
         constructor = love.filesystem.read,
-        postProcess = json.decode
-    }
+        postProcess = json.decode,
+    },
 }
 
 if isThread == true then
@@ -117,7 +117,6 @@ if isThread == true then
     local doneChannel = love.thread.getChannel(channelPrefix .. 'end')
 
     while not isDone do
-
         for _, kind in pairs(resources) do
             local loader = love.thread.getChannel(channelPrefix .. kind.requestKey)
             requestParams = loader:pop()
@@ -144,7 +143,7 @@ else
         loadedCount = 0,
         resourceCount = 0,
         thread = nil,
-        resourceBeingLoaded = nil
+        resourceBeingLoaded = nil,
     }
 
     --- Adds a new resource to be loaded.
@@ -163,7 +162,7 @@ else
             kind = kind,
             holder = holder,
             key = key,
-            requestParams = {...}
+            requestParams = { ... },
         }
     end
 
@@ -178,7 +177,11 @@ else
                 resource = kind.postProcess(data, self.resourceBeingLoaded)
                 self.resourceBeingLoaded.holder[self.resourceBeingLoaded.key] = resource
                 self.loadedCount = self.loadedCount + 1
-                self.callbacks.oneLoaded(self.resourceBeingLoaded.kind, self.resourceBeingLoaded.holder, self.resourceBeingLoaded.key)
+                self.callbacks.oneLoaded(
+                    self.resourceBeingLoaded.kind,
+                    self.resourceBeingLoaded.holder,
+                    self.resourceBeingLoaded.key
+                )
                 self.resourceBeingLoaded = nil
             end
         end

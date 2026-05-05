@@ -14,7 +14,8 @@ function Shader:new(effect, width, height)
         width, height = love.window.getMode()
     end
 
-    self.front, self.back = love.graphics.newCanvas(width --[[@as number]], height), love.graphics.newCanvas(width --[[@as number]], height)
+    self.front, self.back =
+        love.graphics.newCanvas(width --[[@as number]], height), love.graphics.newCanvas(width --[[@as number]], height)
     self.effects = {}
     self.disabled = {}
     self.state = {}
@@ -32,7 +33,7 @@ end
 ---@param w number
 ---@param h number
 function Shader:resize(w, h)
-    self.front, self.back = love.graphics.newCanvas(w,h), love.graphics.newCanvas(w,h)
+    self.front, self.back = love.graphics.newCanvas(w, h), love.graphics.newCanvas(w, h)
     return self
 end
 
@@ -70,7 +71,7 @@ function Shader:pop()
 
     -- draw effects
     love.graphics.setColor(self.state.fg_r, self.state.fg_g, self.state.fg_b, self.state.fg_a)
-    love.graphics.setBlendMode("alpha", "premultiplied")
+    love.graphics.setBlendMode('alpha', 'premultiplied')
     for _, eff in ipairs(self.effects) do
         if not self.disabled[eff.name] then
             (eff.draw or Shader.draw)(self, self.buffer, eff.shader)

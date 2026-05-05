@@ -4,8 +4,8 @@ local localization = {
     fallbackLocale = 'fallback',
     currentLocale = 'fallback',
     translations = {
-        fallback = {}
-    }
+        fallback = {},
+    },
 }
 
 --- Add a new entry to the localization table
@@ -20,9 +20,9 @@ function localization:addEntry(language, uniqueKey, translation)
 
     if not self.translations[language] then
         self.translations[language] = {
-            [uniqueKey] = translation
+            [uniqueKey] = translation,
         }
-        return;
+        return
     end
 
     self.translations[language][uniqueKey] = translation
@@ -64,7 +64,7 @@ end
 --- }
 ---@param filePath string
 function localization:loadFromFile(filePath)
-    local language = filePath:match("([^/]+)%.%w+$")
+    local language = filePath:match('([^/]+)%.%w+$')
     local file = love.filesystem.newFile(filePath)
     file:open('r')
     local data = file:read()
@@ -92,7 +92,7 @@ function localization:getTranslationFiles(dirPath)
     local files = love.filesystem.getDirectoryItems(dirPath)
     local jsonFiles = {}
     for _, file in ipairs(files) do
-        if file:match("%.json$") then
+        if file:match('%.json$') then
             table.insert(jsonFiles, file)
         end
     end
