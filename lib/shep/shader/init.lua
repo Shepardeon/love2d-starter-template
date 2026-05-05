@@ -3,6 +3,7 @@
 ---@field private disabled table<string, boolean>
 ---@field private state table
 local Shader = Object:extend()
+---@type table<string, shep.Effect>
 Shader.Effects = require('lib.shep.Shader.effects')
 
 --- Initializes a new ShaderPipeline.

@@ -184,6 +184,7 @@ function love.load()
     end)
 
     -- Set up the render pipeline
+    ---@type shep.ShaderPipeline
     renderPipeline = renderer:getRenderPipeline('_main')
     renderPipeline:next(shep.Shader.Effects.desaturate)
     game.globalTimer:tween(8, shaderParams, { saturation = 0 }, 'in-out-cubic')

@@ -10,7 +10,7 @@ local InputManager = require('lib.shep.inputManager')
 ---@field input shep.InputManager
 local Game = Object:extend()
 
----@class shep.GameWindow
+---@class shep.GameWindowOptions
 ---@field width number
 ---@field height number
 ---@field scaleX number
@@ -23,7 +23,7 @@ local defaultWindowOptions = {
 }
 
 --- Creates a new Game instance.
----@param windowOptions shep.GameWindow|nil
+---@param windowOptions shep.GameWindowOptions|nil
 function Game:new(windowOptions)
     self.scenes = {}
     self.currentScene = nil
