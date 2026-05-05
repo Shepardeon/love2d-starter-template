@@ -10,8 +10,8 @@ You must keep in mind that this project doesn't have the pretention to be "the b
 
 ## What's included
 
-- [Bump](https://github.com/kikito/bump.lua): A collision-detection library for axis-aligned rectangles.
 - [Badr](https://github.com/Nabeel20/Badr): An easy and enjoyable UI library.
+- [Bump](https://github.com/kikito/bump.lua): A collision-detection library for axis-aligned rectangles.
 - [Classic](https://github.com/rxi/classic): A tiny class module for Lua (globally imported as Object when requiring shep).
 - [Json](https://github.com/rxi/json.lua): A lightweight JSON library for Lua.
 - [Lume](https://github.com/rxi/lume): A collection of functions geared towards game development. Also provides module hotswapping.
