@@ -15,6 +15,7 @@ shep.debug = require('lib.shep.debug')
 shep.loader = require('lib.shep.loader')
 shep.localization = require('lib.shep.localization')
 shep.utils = require('lib.shep.utils')
+shep.audio = require('lib.shep.audio')
 
 -- Classes
 shep.Animator = require('lib.shep.animator')
